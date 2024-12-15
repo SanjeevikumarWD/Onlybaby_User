@@ -1,28 +1,29 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import { toast } from "react-hot-toast";
 
 const OtpVerification = () => {
-  const [otp, setOtp] = useState(""); // State to store the OTP input value
-  const [isOtpSent, setIsOtpSent] = useState(false); // To track if OTP has been sent
-
-  const handleOtpChange = (e) => {
-    setOtp(e.target.value);
-  };
-
-  const handleVerifyOtp = () => {
-    if (otp.length === 6) {
-      // Add your OTP verification logic here
-      console.log("Verifying OTP:", otp);
-      // If OTP is correct, redirect or take necessary action
-    } else {
-      console.log("Please enter a valid 6-digit OTP");
+  const [code,setCode] = useState("");
+  const {verifyEmail,error} = useAuthStore();
+  const navigate = useNavigate();
+  const handleVerifyEmail = async(e) =>{
+    e.preventDefault();
+    try{
+        await verifyEmail(code);
+        navigate("/");
+        toast.success("Email verified successfully");
+    }catch(error){
+        console.log("Error :",error);
+        toast.error("Error verifying email");
     }
-  };
+  }
 
-  const handleResendOtp = () => {
-    // Add OTP resend logic here
-    console.log("Resending OTP...");
-    setIsOtpSent(true); // Indicate that OTP has been sent
-  };
+  // const handleResendOtp = () => {
+  //   // Add OTP resend logic here
+  //   console.log("Resending OTP...");
+  //   setIsOtpSent(true); // Indicate that OTP has been sent
+  // };
 
   return (
     <div className="w-full bg-zinc-50">
@@ -45,25 +46,18 @@ const OtpVerification = () => {
                 placeholder="Enter 6-digit OTP"
                 maxLength="6"
                 required
-                value={otp}
-                onChange={handleOtpChange}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
               />
             </div>
 
             <div className="mt-4 flex items-center justify-between">
               <button
                 type="button"
-                onClick={handleVerifyOtp}
+                onClick={handleVerifyEmail}
                 className="inline-flex items-center px-4 py-2 rounded-lg text-white bg-blue-600 font-bold text-sm"
               >
                 Verify OTP
-              </button>
-              <button
-                type="button"
-                onClick={handleResendOtp}
-                className="text-sm text-gray-600 underline"
-              >
-                {isOtpSent ? "Resend OTP" : "Send OTP"}
               </button>
             </div>
           </form>

@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { products, category } = useContext(ToyStore);
-  
 
   const navigate = useNavigate();
 
@@ -43,7 +42,7 @@ const Home = () => {
           </FadeInOnScroll>
         </div>
       </div>
-      
+
       <div className="px-3 lg:px-10 mt-20">
         <FadeInOnScroll threshold={0.5}>
           <p className="text-xl md:text-2xl lg:text-4xl font-sour mb-10 ">
@@ -105,29 +104,6 @@ const Home = () => {
           </div>
         </FadeInOnScroll>
         <div className="px-3 mt-20">
-          <FadeInOnScroll threshold={0.5}>
-            <p className="text-xl md:text-2xl lg:text-4xl font-sour mb-10 ">
-              Find the Perfect Pick for Every Play!
-            </p>
-          </FadeInOnScroll>
-          <FadeInOnScroll>
-            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-4">
-              {/* {category.map((_, index) => (
-                <div key={index} className="text-center space-y-5">
-                  <div className="w-16 h-16 md:w-24 md:h-24 lg:w-36 lg:h-36 bg-gray-200 rounded-full mx-auto">
-                    <img
-                      src={one}
-                      alt={`Circle ${index + 1}`}
-                      className="w-16 h-16 md:w-24 md:h-24 lg:w-36 lg:h-36 rounded-full mx-auto"
-                    />
-                  </div>
-                  <p className="text-[10px] md:text-[12px] mt-1 font-medium md:font-semibold lg:font-bold">
-                    Circle {index + 1}
-                  </p>
-                </div>
-              ))} */}
-            </div>
-          </FadeInOnScroll>
           <div className="mt-20">
             <FadeInOnScroll threshold={0.5}>
               <p className="text-xl md:text-2xl lg:text-4xl font-sour my-10 ">
@@ -149,9 +125,12 @@ const Home = () => {
               </FadeInOnScroll>
               <FadeInOnScroll>
                 <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {products.slice(-6).reverse().map((product, index) =>
-                    product ? <Cards product={product} key={index} /> : null
-                  )}
+                  {products
+                    .slice(-6)
+                    .reverse()
+                    .map((product, index) =>
+                      product ? <Cards product={product} key={index} /> : null
+                    )}
                 </div>
               </FadeInOnScroll>
             </div>

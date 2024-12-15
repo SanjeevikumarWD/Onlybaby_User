@@ -9,7 +9,7 @@ export const sendVerificationEmail = async(email,name,verificationToken) => {
                 name : "Toy Store",
                 address:process.env.USER,
             },
-            to : "keerthivasan0015@gmail.com",
+            to : recipient,
             subject : "Verify your email address",
             html: emailTemplates.verifyEmail({
                 name : name,

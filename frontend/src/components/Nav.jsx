@@ -16,13 +16,15 @@ import Login from "./registerLogin/Login";
 import Register from "./registerLogin/Register";
 import { ToyStore } from "./context/ContextApi";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "./store/authStore";
 
 const Nav = () => {
   const navigate = useNavigate();
 
+  const {user, logout} = useAuthStore();
+
   const { handleAgeRangeClick, handlePriceRangeClick } = useContext(ToyStore);
 
-  let user = false;
 
   const [signIn, setSignIn] = useState(false); // state to tract that user icon is clicked or not
   const [menuClicked, setMenuClicked] = useState(false); // state to tract that menu = icon is clicked or not
@@ -47,6 +49,12 @@ const Nav = () => {
   const lastScrollYRef = useRef(0);
   const searchRef = useRef(null);
   const modalRef = useRef();
+
+  const handleLogout = () => {  
+    logout();
+    setSignIn(false);
+    navigate("/");
+  }
 
   const handleCartClicked = () => {
     setCartClicked((prev) => !prev);
@@ -125,8 +133,8 @@ const Nav = () => {
           </li>
         </div>
 
-        <li className="font-bold text-2xl">
-          <i>EToy store</i>
+        <li className="">
+          <Link to="/"><img src='/assets/logo.png' alt="Toy Store Logo" className="h-7 md:h-10 p-0" /></Link>
         </li>
 
         <div className="flex space-x-4 items-center">
@@ -294,7 +302,7 @@ const Nav = () => {
 
       {signIn && (
         <div
-          className="absolute top-0 right-0 w-2/3 lg:w-1/3 h-screen bg-blue-50 shadow-md border-2 transform transition-transform duration-500 ease-in-out"
+          className="absolute top-0 right-0 w-2/3 lg:w-5/12 h-screen bg-blue-50 shadow-md border-2 transform transition-transform duration-500 ease-in-out"
           ref={modalRef} // Attach ref to modal div
         >
           <div className="flex items-center justify-between p-3 text-black">
@@ -308,10 +316,10 @@ const Nav = () => {
           </div>
 
           {/* Conditionally Render Content Based on `user` */}
-          {user ? (
+          {user?.isVerified ? (
             // User is logged in, show "Your Orders"
             <div className="p-3">
-              <p className="font-semibold text-3xl mb-4">Hello User</p>
+              <p className="font-semibold text-3xl mb-4">Hello {user.name}</p>
               <p className="font-medium text-2xl pb-2 border-b-2 mb-5">
                 Your orders
               </p>
@@ -320,6 +328,7 @@ const Nav = () => {
                 <li>Buy Again</li>
                 <li>Customer Service</li>
               </ul>
+              <button onClick={() => handleLogout()} className="bg-black text-gray-300 font-semibold rounded-lg px-3 py-1 mt-5">Logout</button>
             </div>
           ) : (
             <>

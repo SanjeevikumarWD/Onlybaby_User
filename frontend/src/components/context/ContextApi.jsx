@@ -1,9 +1,8 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const ToyStore = createContext();
-
-
 
 export const ToyStoreProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
@@ -60,7 +59,7 @@ export const ToyStoreProvider = ({ children }) => {
 
   // Handle filter selection for age
   const handleAgeRangeClick = (range) => {
-    setFilters((prev) => ({ ...prev, ageRange: range }));    
+    setFilters((prev) => ({ ...prev, ageRange: range }));
   };
 
   // Handle filter selection for price
@@ -77,8 +76,8 @@ export const ToyStoreProvider = ({ children }) => {
       !filters.ageRange ||
       (filters.ageRange === "0-1" && productAge >= 0 && productAge <= 1) ||
       (filters.ageRange === "1-3" && productAge > 1 && productAge <= 3) ||
-      (filters.ageRange === "3-6" && productAge > 3 && productAge <= 6)||
-      (filters.ageRange === "6-11" && productAge > 6 && productAge <= 11)||
+      (filters.ageRange === "3-6" && productAge > 3 && productAge <= 6) ||
+      (filters.ageRange === "6-11" && productAge > 6 && productAge <= 11) ||
       (filters.ageRange === "11-19" && productAge > 11 && productAge <= 19);
 
     // Price filter
@@ -92,11 +91,11 @@ export const ToyStoreProvider = ({ children }) => {
         product.price <= 500) ||
       (filters.priceRange === "500-1000" &&
         product.price > 100 &&
-        product.price <= 200)||
+        product.price <= 200) ||
       (filters.priceRange === "1000-2000" &&
         product.price > 1000 &&
         product.price <= 2000);
-      
+
     return ageMatches && priceMatches; // Both conditions must match
   });
 
@@ -109,8 +108,6 @@ export const ToyStoreProvider = ({ children }) => {
   //state to store add to cart items
   const [cartItems, setCartItems] = useState([]);
 
-  //state to manage category of products
-  // const [category, setCategory] = useState(toyCategory);
 
   //function to add and delete new toy category
   const addToyToCategory = (product) => {
@@ -182,6 +179,7 @@ export const ToyStoreProvider = ({ children }) => {
   const removeFromCart = (itemName) => {
     const updatedCart = cartItems.filter((item) => item.name !== itemName);
     setCartItems(updatedCart);
+    toast.success(`${itemName} removed from cart`);
     storeCartInLocalStorage(updatedCart); // Save to local storage
   };
 
@@ -254,15 +252,3 @@ export const ToyStoreProvider = ({ children }) => {
   );
 };
 
-// const toyCategory = [
-//   { img: "activity_gyms.png", category: "Activity Toys" },
-//   { img: "soft_toys.png", category: "Soft Toys" },
-//   { img: "rideon_rocking_toys.png", category: "Ride-On & Rocking Toys" },
-//   { img: "rattles.png", category: "Rattles" },
-//   { img: "puzzles_toys.png", category: "Puzzles Toys" },
-//   { img: "push_pull_toys.png", category: "Push & Pull Toys" },
-//   { img: "musical_toys.png", category: "Musical Toys" },
-//   { img: "bath_toys.png", category: "Bath Toys" },
-//   { img: "building_blocks.png", category: "Building Blocks" },
-//   { img: "educational_toys.png", category: "Educational Toys" },
-// ];

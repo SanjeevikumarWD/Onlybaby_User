@@ -1,33 +1,38 @@
 import React, { useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify"; // Importing toast for success/error messages
+import { toast } from "react-hot-toast";
 
 const Register = ({ onClickAccount }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const { signup, error } = useAuthStore(); // Destructure signup and error from useAuthStore
+  const { signup } = useAuthStore(); // Removed unused 'error'
   const navigate = useNavigate();
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
-    
+    console.log("Form Inputs:", { name, email, password, passwordConfirmation });
+
     if (password !== passwordConfirmation) {
-      toast.error("Passwords do not match");
-      return;
+        toast.error("Passwords do not match");
+        return;
     }
 
     try {
-      await signup(email, name, password);
-      toast.success("Account created successfully");
-      navigate("/verify-email");
+      let data = {'email':email,
+        'name':name,
+        'password':password
+      }
+        await signup(email, name, password);
+        toast.success("Account created successfully");
+        navigate("/verify-email");
     } catch (error) {
-      console.log("Error :", error);
-      toast.error("Error signing up");
+        console.error("Error during signup:", error);
+        toast.error(error.response?.data?.message || "Error signing up");
     }
-  };
+};
 
   return (
     <div className="w-full bg-zinc-50">
@@ -43,7 +48,7 @@ const Register = ({ onClickAccount }) => {
                 Name
               </label>
               <input
-                className="w-full p-2 rounded-md dark:text-gray-400 bg-gray-100 border-transparent  mt-1 block"
+                className="w-full p-2 rounded-md dark:text-gray-400 bg-gray-100 border-transparent mt-1 block"
                 id="name"
                 type="text"
                 name="name"
@@ -51,10 +56,9 @@ const Register = ({ onClickAccount }) => {
                 required
                 autoFocus
                 value={name}
-                onChange={(e) => setName(e.target.value)} // Update state on input change
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
-
             <div className="mt-4">
               <label
                 className="block text-sm font-medium text-gray-800 dark:text-gray-400"
@@ -70,10 +74,9 @@ const Register = ({ onClickAccount }) => {
                 placeholder="Your email address"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)} // Update state on input change
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
             <div className="mt-4">
               <label
                 className="block text-sm font-medium text-gray-800 dark:text-gray-400"
@@ -90,10 +93,9 @@ const Register = ({ onClickAccount }) => {
                 required
                 autoComplete="new-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Update state on input change
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
             <div className="mt-4">
               <label
                 className="block text-sm font-medium text-gray-800 dark:text-gray-400"
@@ -109,24 +111,20 @@ const Register = ({ onClickAccount }) => {
                 placeholder="Repeat your password"
                 required
                 value={passwordConfirmation}
-                onChange={(e) => setPasswordConfirmation(e.target.value)} // Update state on input change
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
               />
             </div>
-
-            <div
-              className="mt-4 flex items-center justify-end"
-              onClick={onClickAccount}
-            >
+            <div className="mt-4 flex items-center justify-end">
               <a
                 className="text-sm text-gray-600 underline hover:text-gray-900 dark:text-gray-400 dark:hover:text-blue-400"
                 href="#"
+                onClick={onClickAccount}
               >
                 Already registered?
               </a>
               <button
                 type="submit"
                 className="ml-4 inline-flex items-center rounded-lg bg-gray-200 p-2 text-xs font-bold text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-800"
-                onClick={handleSignupSubmit}
               >
                 Register
               </button>

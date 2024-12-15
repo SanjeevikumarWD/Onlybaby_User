@@ -1,4 +1,3 @@
-
 import {create} from "zustand";
 import axios from "axios";
 
@@ -16,7 +15,12 @@ export const useAuthStore = create((set)=>({
     signup:async(email,name,password)=>{
         set({error:null});
         try{
-            const response = await axios.post(`${api_url}/signup`,{email,name,password});
+            const response = await axios.post("http://localhost:5001/api/auth/signup",{name,email,password},{
+                headers:{
+                    "Content-Type":"application/json"
+                }
+            });
+            console.log(response);
             set({user:response.data.user,isAuthenticated:true});
         }catch(error){
             set({error:error.response.data.message||"Error signing up",isLoading:false});

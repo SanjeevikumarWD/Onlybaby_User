@@ -10,7 +10,12 @@ import LoginPopup from "./components/popup/LoginPopup.jsx";
 import Login from "./components/registerLogin/Login.jsx";
 import Register from "./components/registerLogin/Register.jsx";
 import Nav from "./components/Nav.jsx";
-import SingleProduct from "./components/singleProduct/SingleProduct.jsx"
+import SingleProduct from "./components/singleProduct/SingleProduct.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ForgotPassword from "./components/registerLogin/ForgetPassword.jsx";
+import OtpVerification from "./components/registerLogin/OtpVerification.jsx";
+import ResetPassword from "./components/registerLogin/ResetPassword.jsx";
 
 const App = () => {
   return (
@@ -29,12 +34,16 @@ const App = () => {
               <Route path="/user/payment" element={<Payment />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/verify-email" element={<OtpVerification />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/resetPassword/:token" element={<ResetPassword />} />
             </Routes>
           </main>
 
           <Footer />
         </div>
       </ToyStoreProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
     </Router>
   );
 };

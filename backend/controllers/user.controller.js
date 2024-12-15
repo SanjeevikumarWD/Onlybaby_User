@@ -5,8 +5,8 @@ import crypto from "crypto";
 import { sendResetPasswordEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelcomeEmail } from "../Mail/mail.js";
 export const signUp = async(req,res) => {
     try{
-        const {username,email,password} = req.body;
-        if(!username || !email || !password){
+        const {name,email,password} = req.body;
+        if(!name || !email || !password){
             return res.status(400).json({success:false,message:"All fields are required"});
         }
         const existingUser = await User.findOne({email});
@@ -21,7 +21,7 @@ export const signUp = async(req,res) => {
 
 
         const user = await User.create({
-            name : username,
+            name,
             email,
             password : hashedPassword,
             verificationToken,
@@ -32,7 +32,7 @@ export const signUp = async(req,res) => {
 
         generateTokenAndSetCookie(res,user._id);
         
-        await sendVerificationEmail(user.email,user.username,verificationToken);
+        await sendVerificationEmail(user.email,user.name,verificationToken);
 
         res.status(201).json({
             success:true,

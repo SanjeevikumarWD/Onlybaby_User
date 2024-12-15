@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { FaCartPlus, FaHeart, FaRegHeart } from "react-icons/fa";
 import { ToyStore } from "../context/ContextApi";
+import { toast } from "react-toastify";
 
 const Cards = ({ product }) => {
   const { addToCart, openSidebar } = useContext(ToyStore);
@@ -8,6 +9,11 @@ const Cards = ({ product }) => {
 
   const toggleLike = () => {
     setIsLiked(!isLiked);
+  };
+
+  const handleAddToCart = (product) => {
+    addToCart(product); // Add item to the cart
+    toast.success(`${product.name} added to cart!`); // Show success notification
   };
 
   // Calculate discount percentage (assuming originalPrice is available)
@@ -48,7 +54,7 @@ const Cards = ({ product }) => {
           {/* Cart Icon */}
           <div
             className="bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-100"
-            onClick={() => addToCart(product)}
+            onClick={() => handleAddToCart(product)}
           >
             <FaCartPlus className="text-[12px] md:text-xl text-black" />
           </div>
