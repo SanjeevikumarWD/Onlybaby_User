@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { ToyStore } from "../context/ContextApi";
 
 const Login = ({ onClickAccount }) => {
   const {login,error} = useAuthStore();
   const navigate = useNavigate();
   const [email,Setemail] = useState("");
   const [password,Setpassword] = useState("");
+  const {setShowForgetPage} = useContext(ToyStore); 
+
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try{
@@ -70,7 +74,7 @@ const Login = ({ onClickAccount }) => {
               >
                 Log in
               </button>
-              <Link to = "/forgot-password" className="text-sm text-gray-600 underline">Forgot Password</Link>
+              <p className="text-sm text-gray-600 underline" onClick={() => setShowForgetPage(true)}>Forgot Password</p>
               <button
                 type="button"
                 onClick={onClickAccount}

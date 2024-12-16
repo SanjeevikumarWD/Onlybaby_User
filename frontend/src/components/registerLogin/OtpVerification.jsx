@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
@@ -6,12 +6,13 @@ import { toast } from "react-hot-toast";
 const OtpVerification = () => {
   const [code,setCode] = useState("");
   const {verifyEmail,error} = useAuthStore();
+  const {setShowOTP} = useContext(ToyStore);
   const navigate = useNavigate();
   const handleVerifyEmail = async(e) =>{
     e.preventDefault();
     try{
         await verifyEmail(code);
-        navigate("/");
+        setShowOTP(false);
         toast.success("Email verified successfully");
     }catch(error){
         console.log("Error :",error);

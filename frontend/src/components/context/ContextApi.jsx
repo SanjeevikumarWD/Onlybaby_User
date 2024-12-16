@@ -13,6 +13,9 @@ export const ToyStoreProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
+  const [showOTP,setShowOTP] = useState(false);
+  const [showForgetpage,setShowForgetPage] = useState(false);
+
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     product: null,
@@ -256,7 +259,11 @@ export const ToyStoreProvider = ({ children }) => {
         handlePriceRangeClick,
         removeFromLiked,
         signIn,
-        setSignIn
+        setSignIn,
+        setShowOTP,
+        showOTP,
+        setShowForgetPage,
+        showForgetpage,
       }}
     >
       {children}

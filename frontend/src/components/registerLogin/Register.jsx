@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { ToyStore } from "../context/ContextApi";
 
 const Register = ({ onClickAccount }) => {
   const [name, setName] = useState("");
@@ -10,6 +11,7 @@ const Register = ({ onClickAccount }) => {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const { signup } = useAuthStore(); // Removed unused 'error'
   const navigate = useNavigate();
+  const {showOTP, setShowOTP} = useContext(ToyStore);
 
   const handleSignupSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ const Register = ({ onClickAccount }) => {
       }
         await signup(email, name, password);
         toast.success("Account created successfully");
-        navigate("/verify-email");
+        setShowOTP(true);
     } catch (error) {
         console.error("Error during signup:", error);
         toast.error(error.response?.data?.message || "Error signing up");

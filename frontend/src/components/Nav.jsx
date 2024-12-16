@@ -18,13 +18,15 @@ import { ToyStore } from "./context/ContextApi";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "./store/authStore";
 import Payment from "./payment/Payment";
+import OtpVerification from "./registerLogin/OtpVerification";
+import ForgetPassword from "./registerLogin/ForgetPassword";
 
 const Nav = () => {
   const navigate = useNavigate();
 
   const { user, logout } = useAuthStore();
 
-  const { handleAgeRangeClick, handlePriceRangeClick, removeFromLiked } =
+  const { handleAgeRangeClick, handlePriceRangeClick, removeFromLiked, showOTP, showForgetpage, setShowForgetPage } =
     useContext(ToyStore);
 
   const [menuClicked, setMenuClicked] = useState(false); // state to tract that menu = icon is clicked or not
@@ -540,6 +542,51 @@ const Nav = () => {
           </div>
         </div>
       )}
+
+
+      {/* otpVerification  */}
+      {showOTP && (
+        <div
+          className="absolute top-0 right-0 w-2/3 lg:w-5/12 h-screen bg-blue-50 shadow-md border-2 transform transition-transform duration-500 ease-in-out"
+          ref={modalRef}
+        >
+          <div className="flex items-center justify-between p-3 text-black">
+            <div className="font-thin text-2xl">
+              <i>EToy Store OTP Verification</i>
+            </div>
+            {/* Close Icon */}
+            <button onClick={() => setShowPayment(false)} className="text-2xl">
+              <X />
+            </button>
+          </div>
+          <div className="h-screen  border-2 overflow-y-auto bg-blue-100">
+            <OtpVerification />
+          </div>
+        </div>
+      )}
+
+
+      {/* forgetpassword  */}
+      {showForgetpage && (
+        <div
+          className="absolute top-0 right-0 w-2/3 lg:w-5/12 h-screen bg-blue-50 shadow-md border-2 transform transition-transform duration-500 ease-in-out"
+          ref={modalRef}
+        >
+          <div className="flex items-center justify-between p-3 text-black">
+            <div className="font-thin text-2xl">
+              <i>EToy Store OTP Verification</i>
+            </div>
+            {/* Close Icon */}
+            <button onClick={() => setShowForgetPage(false)} className="text-2xl">
+              <X />
+            </button>
+          </div>
+          <div className="h-screen  border-2 overflow-y-auto bg-blue-100">
+            <ForgetPassword />
+          </div>
+        </div>
+      )}
+
 
       {likeClicked && (
         <div
