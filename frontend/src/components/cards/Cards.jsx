@@ -1,22 +1,23 @@
 import React, { useContext, useState } from "react";
+import { motion } from "framer-motion";
 import { FaCartPlus, FaHeart, FaRegHeart } from "react-icons/fa";
 import { ToyStore } from "../context/ContextApi";
 import { toast } from "react-toastify";
+import ProductImage from "./ProductImage";
+import DiscountBadge from "./DiscountBadge";
+import ActionButton from "./ActionButton";
 
 const Cards = ({ product }) => {
-  const { addToCart, openSidebar } = useContext(ToyStore);
-  const [isLiked, setIsLiked] = useState(false);
-
-  const toggleLike = () => {
-    setIsLiked(!isLiked);
-  };
+  const { addToCart, openSidebar, handleLikeToggle, likedItems } =
+    useContext(ToyStore);
+  
+  const isLiked = likedItems.some((item) => item._id === product._id);
 
   const handleAddToCart = (product) => {
-    addToCart(product); // Add item to the cart
-    toast.success(`${product.name} added to cart!`); // Show success notification
+    addToCart(product);
+    toast.success(`${product.name} added to cart!`);
   };
 
-  // Calculate discount percentage (assuming originalPrice is available)
   const discountPercentage = product.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -24,55 +25,59 @@ const Cards = ({ product }) => {
     : null;
 
   return (
-    <div className="relative flex flex-col justify-between max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-2 py-3 sm:px-5 md:px-2 rounded-md shadow-md dark:bg-gray-50 dark:text-gray-900">
-      {/* Discount Badge */}
-      {discountPercentage && (
-        <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-md">
-          {discountPercentage}% OFF
-        </div>
-      )}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="relative flex flex-col justify-between max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg p-2 py-3 sm:px-5 md:px-2 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white dark:bg-gray-50 dark:text-gray-900"
+    >
+      <DiscountBadge percentage={discountPercentage} />
 
-      {/* Product Image */}
-      <img
-        src={product.image[0]}
-        alt={product.name}
-        className="object-cover object-center w-full rounded-md h-48 sm:h-60 md:h-72 lg:h-80 dark:bg-gray-500"
+      <ProductImage
+        image={product.image[0]}
+        name={product.name}
         onClick={() => openSidebar(product)}
       />
 
-      {/* Product Details */}
-      <div className="mt-4 mb-2">
-        <span className="block text-xs md:text-sm lg:text-md font-medium tracking-widest uppercase dark:text-violet-600">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="mt-4 mb-2"
+      >
+        <motion.span
+          whileHover={{ scale: 1.02 }}
+          className="block text-xs md:text-sm lg:text-md font-medium tracking-widest uppercase dark:text-violet-600"
+        >
           {product.name}
-        </span>
-      </div>
+        </motion.span>
+      </motion.div>
 
-      {/* Price and Actions */}
-      <div className="flex items-center justify-between font-bold text-sm sm:text-base dark:text-gray-800">
-        <div className="text-gray-700">₹ {product.price}</div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="flex items-center justify-between font-bold text-sm sm:text-base dark:text-gray-800"
+      >
+        <motion.div whileHover={{ scale: 1.05 }} className="text-gray-700">
+          ₹ {product.price}
+        </motion.div>
+
         <div className="flex gap-5">
-          {/* Cart Icon */}
-          <div
-            className="bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-100"
-            onClick={() => handleAddToCart(product)}
-          >
-            <FaCartPlus className="text-[12px] md:text-xl text-black" />
-          </div>
+          <ActionButton onClick={() => handleAddToCart(product)}>
+            <FaCartPlus className="text-[12px] md:text-xl text-black transition-colors duration-300 hover:text-blue-600" />
+          </ActionButton>
 
-          {/* Heart Icon */}
-          <div
-            className="bg-white p-2 rounded-full shadow-md cursor-pointer hover:bg-gray-100"
-            onClick={toggleLike}
-          >
+          <ActionButton onClick={() => handleLikeToggle(product)}>
             {isLiked ? (
               <FaHeart className="text-[12px] md:text-xl text-red-500" />
             ) : (
-              <FaRegHeart className="text-[12px] md:text-xl text-gray-500" />
+              <FaRegHeart className="text-[12px] md:text-xl text-gray-500 hover:text-red-500 transition-colors duration-300" />
             )}
-          </div>
+          </ActionButton>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

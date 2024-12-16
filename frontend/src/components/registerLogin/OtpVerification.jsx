@@ -19,11 +19,6 @@ const OtpVerification = () => {
     }
   }
 
-  // const handleResendOtp = () => {
-  //   // Add OTP resend logic here
-  //   console.log("Resending OTP...");
-  //   setIsOtpSent(true); // Indicate that OTP has been sent
-  // };
 
   return (
     <div className="w-full bg-zinc-50">

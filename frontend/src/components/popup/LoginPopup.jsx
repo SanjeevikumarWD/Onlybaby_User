@@ -3,7 +3,8 @@ import { ToyStore } from "../context/ContextApi";
 import { X } from "lucide-react";
 
 const LoginPopup = () => {
-  const { isLoggedIn, logIn, logOut } = useContext(ToyStore);
+  const { isLoggedIn, setIsLoggedIn, user, logIn, logOut, signIn, setSignin } =
+    useContext(ToyStore);
 
   const [showPopup, setShowPopup] = useState(false);
 
@@ -19,6 +20,12 @@ const LoginPopup = () => {
 
   if (!showPopup) return null; // Don't render anything if popup is not visible
 
+  if (user?.isVerified) {
+    logIn;
+  }else{
+    logOut;
+  }
+
   return (
     <>
       {/* Backdrop with blur effect */}
@@ -27,7 +34,7 @@ const LoginPopup = () => {
       {/* Centered Popup */}
       <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-30">
         <div className="text-center">
-          {isLoggedIn ? (
+          {!isLoggedIn ? (
             <>
               <div className="max-h-[300px] ">
                 <img
@@ -35,7 +42,10 @@ const LoginPopup = () => {
                   alt=""
                   className="h-[100px] w-full object-cover"
                 />
-                <X className="absolute top-2 right-2 bg-white opacity-85 rounded-full" onClick={() => setShowPopup(false)}/>
+                <X
+                  className="absolute top-2 right-2 bg-white opacity-85 rounded-full"
+                  onClick={() => setShowPopup(false)}
+                />
                 <div>
                   <h1 className="text-2xl font-semibold my-1">
                     🎉 Log In & Unlock Exclusive Perks! 🎉
@@ -45,7 +55,9 @@ const LoginPopup = () => {
                     🚀 Don’t miss out—start saving now! ✨
                   </p>
                   <div className="flex justify-around my-4">
-                    <button className="py-1 px-4 bg-gray-800 text-white rounded-xl">
+                    <button className="py-1 px-4 bg-gray-800 text-white rounded-xl"
+                      onClick={() => setSignin(true)}
+                    >
                       LOGIN
                     </button>
                     <button
@@ -65,7 +77,10 @@ const LoginPopup = () => {
                 alt=""
                 className="h-[100px] w-full object-cover"
               />
-              <X className="absolute top-2 right-2 bg-white opacity-85 rounded-full" onClick={() => setShowPopup(false)}/>
+              <X
+                className="absolute top-2 right-2 bg-white opacity-85 rounded-full"
+                onClick={() => setShowPopup(false)}
+              />
               <div>
                 <h1 className="text-2xl font-semibold my-1">
                   Join Now & Get 10% OFF Every Year!

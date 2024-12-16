@@ -10,12 +10,13 @@ import LoginPopup from "./components/popup/LoginPopup.jsx";
 import Login from "./components/registerLogin/Login.jsx";
 import Register from "./components/registerLogin/Register.jsx";
 import Nav from "./components/Nav.jsx";
-import SingleProduct from "./components/singleProduct/SingleProduct.jsx";
+// import SingleProduct from "./components/singleProduct/SingleProduct.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ForgotPassword from "./components/registerLogin/ForgetPassword.jsx";
 import OtpVerification from "./components/registerLogin/OtpVerification.jsx";
 import ResetPassword from "./components/registerLogin/ResetPassword.jsx";
+import SingleProduct from "./components/product/SingleProduct.jsx";
 
 const App = () => {
   return (

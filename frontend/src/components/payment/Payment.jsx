@@ -1,32 +1,86 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { ToyStore } from "../context/ContextApi";
 
 const Payment = () => {
+  // State to store form details
+  const [billingDetails, setBillingDetails] = useState({
+    firstName: "",
+    lastName: "",
+    companyName: "",
+    country: "India",
+    streetAddress: "",
+    apartment: "",
+    city: "",
+    state: "",
+    postcode: "",
+    phone: "",
+    email: "",
+    orderNotes: "",
+  });
+
+  const {cartItems} = useContext(ToyStore);
+
+  // Calculate Subtotal and Total
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const total = subtotal; // Adjust if taxes/shipping apply
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setBillingDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Order Details:", {
+      billingDetails,
+      cartItems,
+      subtotal,
+      total,
+    });
+    // You can send this data to your backend for order processing
+  };
+
   return (
-    <div className="p-5 mt-20">
-      <div className="bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold mb-4 w-full flex justify-center">CHECK OUT </h1>
+    <div>
+      <div className="bg-white rounded-lg mb-10">
         {/* Billing Details Section */}
         <div className="p-6">
           <h3 className="text-2xl font-semibold mb-4">Billing Details</h3>
-          <form className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6">
-            {/* First Name and Last Name */}
+          <form
+            className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6"
+            onSubmit={handleSubmit}
+          >
+            {/* First Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 First Name *
               </label>
               <input
                 type="text"
+                name="firstName"
+                value={billingDetails.firstName}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
                 placeholder="First Name"
                 required
               />
             </div>
+
+            {/* Last Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Last Name *
               </label>
               <input
                 type="text"
+                name="lastName"
+                value={billingDetails.lastName}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
                 placeholder="Last Name"
                 required
@@ -34,26 +88,18 @@ const Payment = () => {
             </div>
 
             {/* Company Name */}
-            <div>
+            <div className="lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700">
                 Company Name (Optional)
               </label>
               <input
                 type="text"
+                name="companyName"
+                value={billingDetails.companyName}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
                 placeholder="Company Name"
               />
-            </div>
-
-            {/* Country / Region */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Country / Region *
-              </label>
-              <select className="w-full mt-2 p-2 border rounded-md" required>
-                <option>India</option>
-                {/* Add other countries if necessary */}
-              </select>
             </div>
 
             {/* Street Address */}
@@ -63,59 +109,74 @@ const Payment = () => {
               </label>
               <input
                 type="text"
+                name="streetAddress"
+                value={billingDetails.streetAddress}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="House number and street name"
+                placeholder="Street Address"
                 required
               />
             </div>
 
-            {/* Apartment, Suite, Unit */}
+            {/* Apartment */}
             <div className="lg:col-span-2">
               <label className="block text-sm font-medium text-gray-700">
-                Apartment, Suite, Unit (Optional)
+                Apartment, Suite, etc. (Optional)
               </label>
               <input
                 type="text"
+                name="apartment"
+                value={billingDetails.apartment}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Apartment, suite, unit, etc."
+                placeholder="Apartment, Suite, etc."
               />
             </div>
 
-            {/* Town / City */}
+            {/* City */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Town / City *
               </label>
               <input
                 type="text"
+                name="city"
+                value={billingDetails.city}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Town / City"
+                placeholder="City"
                 required
               />
             </div>
 
-            {/* State / County */}
+            {/* State */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 State / County *
               </label>
               <input
                 type="text"
+                name="state"
+                value={billingDetails.state}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="State / County"
+                placeholder="State"
                 required
               />
             </div>
 
-            {/* Postcode / ZIP */}
+            {/* Postcode */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Postcode / ZIP *
               </label>
               <input
                 type="text"
+                name="postcode"
+                value={billingDetails.postcode}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Postcode / ZIP"
+                placeholder="Postcode"
                 required
               />
             </div>
@@ -127,32 +188,29 @@ const Payment = () => {
               </label>
               <input
                 type="tel"
+                name="phone"
+                value={billingDetails.phone}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Phone number"
+                placeholder="Phone"
                 required
               />
             </div>
 
-            {/* Email Address */}
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Email Address *
               </label>
               <input
                 type="email"
+                name="email"
+                value={billingDetails.email}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Email Address"
+                placeholder="Email"
                 required
               />
-            </div>
-
-
-            {/* Ship to Different Address */}
-            <div className="flex items-center">
-              <input type="checkbox" className="mr-2 w-4 h-4 text-blue-600" />
-              <label className="text-sm text-gray-700">
-                Ship to a different address?
-              </label>
             </div>
 
             {/* Order Notes */}
@@ -161,10 +219,21 @@ const Payment = () => {
                 Order Notes (Optional)
               </label>
               <textarea
+                name="orderNotes"
+                value={billingDetails.orderNotes}
+                onChange={handleChange}
                 className="w-full mt-2 p-2 border rounded-md"
                 placeholder="Notes about your order, e.g. special notes for delivery."
               ></textarea>
             </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-700"
+            >
+              Place Order
+            </button>
           </form>
         </div>
 
@@ -172,66 +241,34 @@ const Payment = () => {
         <div className="p-6 border-t bg-gray-50">
           <h4 className="text-2xl font-semibold mb-4">Your Order</h4>
           <div className="bg-white p-4 rounded-lg shadow-md">
-            {/* Product Info */}
-            <div className="flex justify-between mb-4">
-              <p>Neem / Bamboo Wooden Comb - Pocket Comb</p>
-              <p>2 × ₹50.00</p>
-            </div>
+            {/* Dynamically Render Cart Items */}
+            {cartItems.map((item, index) => (
+              <div key={index} className="flex justify-between mb-4">
+                <p>{item.name}</p>
+                <p>{item.quantity} × ₹{item.price.toFixed(2)}</p>
+              </div>
+            ))}
+
+            {/* Subtotal */}
             <div className="flex justify-between font-bold mb-4">
               <p>Subtotal</p>
-              <p>₹100.00</p>
+              <p>₹{subtotal.toFixed(2)}</p>
             </div>
+
+            {/* Total */}
             <div className="flex justify-between font-bold">
               <p>Total</p>
-              <p>₹100.00</p>
+              <p>₹{total.toFixed(2)}</p>
             </div>
 
             {/* Payment Info */}
             <div className="mt-6">
               <h5 className="text-xl font-semibold">Payment Method</h5>
-              <div className="flex items-center mt-4">
-                <input
-                  type="radio"
-                  name="payment"
-                  className="mr-2 w-4 h-4 text-blue-600 focus:ring-blue-500"
-                  defaultChecked
-                />
-                <label className="text-sm text-gray-700">
-                  Credit Card/Debit Card/NetBanking
-                </label>
-              </div>
               <p className="text-sm text-gray-600 mt-2">
                 Pay securely by Credit or Debit card or Internet Banking through
                 Razorpay.
               </p>
             </div>
-
-            {/* Shipping Information */}
-            <div className="mt-6">
-              <h5 className="text-xl font-semibold">Shipping Information</h5>
-              <p className="text-sm text-gray-600 mt-2">
-                <ul className="list-disc pl-5">
-                  <li>
-                    Parcel dispatching time: 2-3 working days from ordering.
-                  </li>
-                  <li>Delivery time: 3-5 working days.</li>
-                  <li>
-                    OnlyCry will not take complaints, return or refund without
-                    unboxing videos. The video should start before opening the
-                    parcel, without any pauses.
-                  </li>
-                  <li>
-                    OnlyCry will not return or refund for natural wood hollows
-                    and discolorations on toys.
-                  </li>
-                </ul>
-              </p>
-            </div>
-
-            {/* Place Order Button */}
-            <button className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-700">
-              Place Order
-            </button>
           </div>
         </div>
       </div>

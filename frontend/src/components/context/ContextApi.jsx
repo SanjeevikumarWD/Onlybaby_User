@@ -1,10 +1,15 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const ToyStore = createContext();
 
 export const ToyStoreProvider = ({ children }) => {
+  const navigate = useNavigate();
+
+  const [signIn, setSignIn] = useState(false); // state to tract that user icon is clicked or not
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
@@ -12,6 +17,31 @@ export const ToyStoreProvider = ({ children }) => {
     isOpen: false,
     product: null,
   });
+
+  const [likedItems, setLikedItems] = useState(
+    JSON.parse(localStorage.getItem("likedItems")) || []
+  );
+
+  useEffect(() => {
+    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+  }, [likedItems]);
+
+  const handleLikeToggle = (product) => {
+    setLikedItems((prevLikedItems) => {
+      if (prevLikedItems.some((item) => item._id === product._id)) {
+        // If item is already liked, remove it
+        return prevLikedItems.filter((item) => item._id !== product._id);
+      }
+      // Otherwise, add the item
+      return [...prevLikedItems, product];
+    });
+  };
+
+  const removeFromLiked = (itemName) => {
+    const updatedCart = likedItems.filter((item) => item.name !== itemName);
+    setLikedItems(updatedCart);
+    toast.success(`${itemName} removed from cart`);
+  };
 
   const openSidebar = (product) => {
     setSidebarState({ isOpen: true, product });
@@ -65,7 +95,7 @@ export const ToyStoreProvider = ({ children }) => {
   // Handle filter selection for price
   const handlePriceRangeClick = (range) => {
     setFilters((prev) => ({ ...prev, priceRange: range }));
-    navigate("/products");
+    navigate("/product");
   };
 
   // Filter products based on the selected filters
@@ -102,26 +132,8 @@ export const ToyStoreProvider = ({ children }) => {
   //state to mention that user is logged in or not
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  //state to store liked items
-  const [likedItems, setLikedItems] = useState([]);
-
   //state to store add to cart items
   const [cartItems, setCartItems] = useState([]);
-
-
-  //function to add and delete new toy category
-  const addToyToCategory = (product) => {
-    setCategory((prev) => [...prev, product]);
-  };
-
-  const deleteToyFromCategory = (categoryName) => {
-    setCategory((prev) => prev.filter((toy) => toy.category !== categoryName));
-  };
-
-  //function to update liked products
-  const handleLikedProducts = (product) => {
-    setLikedItems((prev) => [...prev, product]);
-  };
 
   // Store cart items in local storage
   const storeCartInLocalStorage = (updatedCart) => {
@@ -226,10 +238,9 @@ export const ToyStoreProvider = ({ children }) => {
         isLoggedIn,
         setIsLoggedIn,
         likedItems,
-        setLikedItems,
         Login,
         Logout,
-        handleLikedProducts,
+        handleLikeToggle,
         cartItems,
         setCartItems,
         addToCart,
@@ -237,18 +248,18 @@ export const ToyStoreProvider = ({ children }) => {
         decrementQuantity,
         removeFromCart,
         calculateTotal,
-        deleteToyFromCategory,
-        addToyToCategory,
         sidebarState,
         openSidebar,
         closeSidebar,
         filteredProducts,
         handleAgeRangeClick,
         handlePriceRangeClick,
+        removeFromLiked,
+        signIn,
+        setSignIn
       }}
     >
       {children}
     </ToyStore.Provider>
   );
 };
-

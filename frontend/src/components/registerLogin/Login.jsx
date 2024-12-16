@@ -63,7 +63,7 @@ const Login = ({ onClickAccount }) => {
               />
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex items-center justify-between gap-3">
               <button
                 type="submit"
                 className="inline-flex items-center px-4 py-2 rounded-lg text-gray-400 bg-black font-bold text-sm"
