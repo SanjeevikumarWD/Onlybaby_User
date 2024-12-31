@@ -32,11 +32,16 @@ export const saveOrUpdateDraftOrder = async (req, res) => {
       });
     }
 
+    console.log(" orders for shipping fee", userOrder)
+
     // Check if the user has a purchase history
-    const hasPurchasedBefore = userOrder.orders.some((order) => !order.isDraft);
+    const hasPurchasedBefore = userOrder.orders.length > 0;
+
+    console.log(" orders for shipping fee", userOrder.orders)
+
 
     // Determine the shipping fee
-    const shippingFee = hasPurchasedBefore ? 0 : 50;
+    const shippingFee = hasPurchasedBefore ? 50 : 0;
 
     // Check for an existing draft order
     const draftOrderIndex = userOrder.orders.findIndex(

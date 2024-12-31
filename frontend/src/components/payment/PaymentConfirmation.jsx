@@ -31,7 +31,8 @@ const PaymentConfirmation = () => {
     country,
   } = shippingAddress;
 
-  const isFirstOrder = orders.length === 0;
+  console.log(" shipping fees ", shippingPrice);
+
   const subtotal = itemsPrice + shippingPrice;
 
   const discount = memberShip? 0.1 * subtotal : 0; // 10% discount if memberShipis true
