@@ -63,7 +63,7 @@ const Cards = ({ product }) => {
           ₹ {product.price}
         </motion.div>
 
-        <div className="flex gap-5">
+        <div className="flex gpap-2 md:gap-5">
           <ActionButton onClick={() => handleAddToCart(product)}>
             <FaCartPlus className="text-[12px] md:text-xl text-black transition-colors duration-300 hover:text-blue-600" />
           </ActionButton>

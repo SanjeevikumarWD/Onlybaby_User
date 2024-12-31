@@ -1,12 +1,15 @@
 import { emailTemplates } from "./emailTemplates.js";
 import { sendMail, transporter } from "./mailGenerate.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const sendVerificationEmail = async(email,name,verificationToken) => {
     try{
         const recipient = email;
         const mailOptions = {
             from : {
-                name : "Toy Store",
+                name : "Only Baby",
                 address:process.env.USER,
             },
             to : recipient,
@@ -28,13 +31,14 @@ export const sendWelcomeEmail = async(email,name) => {
         const recipient = email;
         const mailOptions = {
             from : {
-                name : "Toy Store",
+                name : "Only Baby",
                 address:process.env.USER,
             },
             to : email,
-            subject : "Welcome to Toy Store",
+            subject : "Welcome to Only Baby",
             html: emailTemplates.welcome({
                 name : name,
+                shopUrl : process.env.CLIENT_URL,
             })
         }
         await sendMail(transporter,mailOptions);
@@ -49,15 +53,15 @@ export const sendResetPasswordEmail = async(email,resetURL) => {
         const recipient = email;
         const mailOptions ={
             from : {
-                name : "Toy Store",
+                name : "Only Baby",
                 address:process.env.USER,
             },
             to : email,
             subject : "Reset your password",
             html: emailTemplates.resetPasswordButton({
-                name : "Keerthivasan",
+                name: "Champion",	
                 resetURL : resetURL,
-            })
+            }),
         }
         await sendMail(transporter,mailOptions);
     }catch(error){
@@ -72,13 +76,13 @@ export const sendResetSuccessEmail = async(email) => {
         const recipient = email;
         const mailOptions = {
             from : {
-                name : "Toy Store",
+                name : "Only Baby",
                 address:process.env.USER,
             },
             to : email,
             subject : "Password Reset Successful",
             html: emailTemplates.resetSuccess({
-                name : "Keerthivasan",
+                name : "Champion",
             })
         }
         await sendMail(transporter,mailOptions);

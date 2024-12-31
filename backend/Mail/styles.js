@@ -2,23 +2,23 @@ export const baseStyles = `
   body { 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
-    color: #2d3748;
+    color: #2d3748; /* Dark text for readability */
     margin: 0;
     padding: 0;
-    background-color: #f7fafc;
+    background-color: #ffe4e1; /* Light pink background for the body */
   }
   .container { 
     max-width: 600px;
     margin: 0 auto;
     padding: 24px;
-    background-color: #ffffff;
+    background-color: #ffffff; /* White container background for contrast */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   .header { 
     text-align: center;
     padding: 24px;
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    background-color: #d81b60; /* Strong rose color for header */
     color: white;
     border-radius: 8px 8px 0 0;
     margin: -24px -24px 24px -24px;
@@ -31,32 +31,32 @@ export const baseStyles = `
   }
   .content { 
     padding: 24px;
-    background-color: #ffffff;
+    background-color: #fff0f5; /* Light rose for the content area */
     border-radius: 4px;
     line-height: 1.8;
   }
   .content h2 {
-    color: #2d3748;
+    color: #c2185b; /* Deep rose for headings */
     font-size: 20px;
     margin-bottom: 16px;
     font-weight: 600;
   }
   .content p {
-    color: #4a5568;
+    color: #ad1457; /* Medium rose for text */
     margin-bottom: 16px;
   }
   .footer { 
     text-align: center;
     padding: 24px;
     font-size: 14px;
-    color: #718096;
-    border-top: 1px solid #e2e8f0;
+    color: #880e4f; /* Darker rose for footer text */
+    border-top: 1px solid #f48fb1;
     margin-top: 24px;
   }
   .button {
     display: inline-block;
     padding: 12px 32px;
-    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    background-color: white; /* Vibrant pink for buttons */
     color: white;
     text-decoration: none;
     border-radius: 6px;
@@ -64,21 +64,16 @@ export const baseStyles = `
     margin: 24px 0;
     text-align: center;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
-  }
-  .button:hover {
-    background: linear-gradient(135deg, #45a049 0%, #409444 100%);
-    box-shadow: 0 4px 6px rgba(76, 175, 80, 0.3);
-    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(233, 30, 99, 0.4);
   }
   .otp {
     font-size: 32px;
     font-weight: 700;
     letter-spacing: 4px;
-    color: #4CAF50;
+    color: #b71c1c; /* Deep red for OTP */
     padding: 16px;
-    background-color: #f0fff4;
-    border: 2px dashed #9ae6b4;
+    background-color: #ffe4e1;
+    border: 2px dashed #f48fb1;
     border-radius: 8px;
     margin: 24px auto;
     max-width: 240px;
@@ -86,15 +81,15 @@ export const baseStyles = `
     font-family: 'Courier New', monospace;
   }
   .highlight {
-    background-color: #f0fff4;
-    border-left: 4px solid #4CAF50;
+    background-color: #ffe4e1;
+    border-left: 4px solid #c2185b; /* Deep rose border */
     padding: 16px;
     margin: 24px 0;
     border-radius: 0 8px 8px 0;
   }
   .divider {
     height: 1px;
-    background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+    background-color: #f48fb1; /* Rose for divider */
     margin: 24px 0;
   }
   .social-links {
@@ -102,12 +97,12 @@ export const baseStyles = `
     margin-top: 24px;
   }
   .social-links a {
-    color: #718096;
+    color: #ad1457; /* Medium rose for links */
     text-decoration: none;
     margin: 0 8px;
   }
   .social-links a:hover {
-    color: #4CAF50;
+    color: #d81b60; /* Strong rose hover effect */
   }
   .logo {
     width: 64px;

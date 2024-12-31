@@ -1,65 +1,80 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { ShieldCheckIcon } from "lucide-react";
+import { ToyStore } from "../context/ContextApi";
 
 const OtpVerification = () => {
-  const [code,setCode] = useState("");
-  const {verifyEmail,error} = useAuthStore();
-  const {setShowOTP} = useContext(ToyStore);
-  const navigate = useNavigate();
-  const handleVerifyEmail = async(e) =>{
-    e.preventDefault();
-    try{
-        await verifyEmail(code);
-        setShowOTP(false);
-        toast.success("Email verified successfully");
-    }catch(error){
-        console.log("Error :",error);
-        toast.error("Error verifying email");
-    }
-  }
+  const [code, setCode] = useState("");
+  const { verifyEmail } = useAuthStore();
+  const {showOTP, setShowOTP} = useContext(ToyStore)
 
+  const handleVerifyEmail = async (e) => {
+    e.preventDefault();
+    try {
+      await verifyEmail(code);
+      toast.success("Email verified successfully");
+      setShowOTP(false);
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error verifying email");
+    }
+  };
 
   return (
-    <div className="w-full bg-zinc-50">
-      <div className="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0">
-        <div className="w-full overflow-hidden bg-white p-8 shadow-sm sm:max-w-md sm:rounded-lg">
-          <p className="font-bold mb-5 text-gray-500">OTP Verification</p>
-          <form className="mt-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 py-8 px-4 sm:px-6 lg:px-8"
+    >
+      <div className="max-w-md mx-auto">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="bg-white rounded-2xl shadow-xl p-8"
+        >
+          <div className="flex items-center justify-center mb-8">
+            <ShieldCheckIcon className="h-12 w-12 text-rose-500" />
+          </div>
+
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            Verify Your Email
+          </h2>
+          <p className="text-gray-600 text-center mb-8">
+            Please enter the verification code sent to your email
+          </p>
+
+          <form onSubmit={handleVerifyEmail} className="space-y-6">
             <div>
-              <label
-                className="block text-sm font-medium text-gray-800"
-                htmlFor="otp"
-              >
-                Enter OTP
+              <label className="block text-sm font-medium text-gray-700">
+                Verification Code
               </label>
-              <input
-                className="w-full p-2 rounded-md bg-gray-100 mt-1 block"
-                id="otp"
+              <motion.input
+                whileFocus={{ scale: 1.01 }}
+                className="mt-1 block w-full px-4 py-3 rounded-lg bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-rose-500 focus:border-transparent transition-all text-center text-2xl tracking-widest"
                 type="text"
-                name="otp"
-                placeholder="Enter 6-digit OTP"
-                maxLength="6"
                 required
+                maxLength="6"
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => setCode(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="000000"
               />
             </div>
 
-            <div className="mt-4 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={handleVerifyEmail}
-                className="inline-flex items-center px-4 py-2 rounded-lg text-white bg-blue-600 font-bold text-sm"
-              >
-                Verify OTP
-              </button>
-            </div>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              className="w-full px-6 py-3 bg-rose-600 text-white font-semibold rounded-lg shadow-md hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 transition-all"
+            >
+              Verify Code
+            </motion.button>
           </form>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

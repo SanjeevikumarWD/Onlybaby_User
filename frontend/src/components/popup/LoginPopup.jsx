@@ -1,109 +1,77 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ToyStore } from "../context/ContextApi";
 import { X } from "lucide-react";
+import PopupContent from "./PopupContent";
+import { useAuthStore } from "../store/authStore";
 
 const LoginPopup = () => {
-  const { isLoggedIn, setIsLoggedIn, user, logIn, logOut, signIn, setSignin } =
+  const { isLoggedIn, setIsLoggedIn, signIn, setSignIn, memberShip } =
     useContext(ToyStore);
-
+  const { user } = useAuthStore();
   const [showPopup, setShowPopup] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  // Show popup after 10 seconds on page load
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowPopup(true);
-    }, 10000); // 10 seconds
-
-    // Cleanup timer if the component unmounts
+      setIsAnimating(true);
+    }, 20000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (!showPopup) return null; // Don't render anything if popup is not visible
+  const handleClose = () => {
+    setIsAnimating(false);
+    setTimeout(() => setShowPopup(false), 300);
+  };
 
-  if (user?.isVerified) {
-    logIn;
-  }else{
-    logOut;
-  }
+  const handleSignIn = () => {
+    setSignIn(true);
+    setIsLoggedIn(true);
+  };
+
+  const handleSignOut = () => {
+    setSignIn(false);
+    setIsLoggedIn(false);
+  };
+
+  if (!showPopup) return null;
+  
+  
 
   return (
     <>
-      {/* Backdrop with blur effect */}
-      <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 backdrop-blur-sm z-20"></div>
+      <div
+        className={`${memberShip ? "hidden" : ""} fixed inset-0 transition-all duration-500 ease-out ${
+          isAnimating
+            ? "opacity-100 bg-black/50 backdrop-blur-[2px]"
+            : "opacity-0"
+        } z-20`}
+        onClick={handleClose}
+      />
 
-      {/* Centered Popup */}
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-lg max-w-sm w-full z-30">
-        <div className="text-center">
-          {!isLoggedIn ? (
-            <>
-              <div className="max-h-[300px] ">
-                <img
-                  src="/assets/1.png"
-                  alt=""
-                  className="h-[100px] w-full object-cover"
-                />
-                <X
-                  className="absolute top-2 right-2 bg-white opacity-85 rounded-full"
-                  onClick={() => setShowPopup(false)}
-                />
-                <div>
-                  <h1 className="text-2xl font-semibold my-1">
-                    🎉 Log In & Unlock Exclusive Perks! 🎉
-                  </h1>
-                  <p className="italic">
-                    Get extra credits and exciting offers just for logging in!
-                    🚀 Don’t miss out—start saving now! ✨
-                  </p>
-                  <div className="flex justify-around my-4">
-                    <button className="py-1 px-4 bg-gray-800 text-white rounded-xl"
-                      onClick={() => setSignin(true)}
-                    >
-                      LOGIN
-                    </button>
-                    <button
-                      className="py-1 px-4 bg-gray-800 text-white rounded-xl"
-                      onClick={setShowPopup(false)}
-                    >
-                      LATER
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="max-h-[300px] ">
-              <img
-                src="/assets/1.png"
-                alt=""
-                className="h-[100px] w-full object-cover"
-              />
-              <X
-                className="absolute top-2 right-2 bg-white opacity-85 rounded-full"
-                onClick={() => setShowPopup(false)}
-              />
-              <div>
-                <h1 className="text-2xl font-semibold my-1">
-                  Join Now & Get 10% OFF Every Year!
-                </h1>
-                <p className="italic">
-                  Sign up for membership and enjoy a 10% discount on every
-                  purchase—all year long! Don't miss out! 🌟
-                </p>
-                <div className="flex justify-around my-4">
-                  <button className="py-1 px-4 bg-gray-800 text-white rounded-xl">
-                    REGISTER
-                  </button>
-                  <button
-                    className="py-1 px-4 bg-gray-800 text-white rounded-xl"
-                    onClick={() => setShowPopup(false)}
-                  >
-                    LATER
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+      <div
+        className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+          bg-white rounded-2xl shadow-2xl max-w-sm w-full z-30 overflow-hidden
+          transition-all duration-500 ease-out
+          ${isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-95"}`}
+      >
+        <button
+          onClick={handleClose}
+          className="absolute top-3 right-3 p-1.5 rounded-full 
+            bg-white/80 backdrop-blur-sm shadow-sm z-10
+            transition-all duration-200 
+            hover:bg-gray-100 hover:scale-110
+            active:scale-95"
+        >
+          <X className="w-4 h-4 text-gray-600" />
+        </button>
+
+        <PopupContent
+          isSignedIn={signIn}
+          onSignIn={handleSignIn}
+          onSignOut={handleSignOut}
+          onClose={handleClose}
+        />
       </div>
     </>
   );

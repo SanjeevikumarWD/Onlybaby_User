@@ -23,7 +23,6 @@ export const getSpecificProduct = async (req, res) => {
   try {
     const { name } = req.params;
     const specificProduct = await Product.findOne({ name: name });
-    console.log(specificProduct);
     res.status(200).json({ success: true, specificProduct });
   } catch (error) {
     console.log("Error in getSpecificProduct controller", error.message);

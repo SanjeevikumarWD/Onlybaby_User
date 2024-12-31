@@ -1,41 +1,142 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 export const ToyStore = createContext();
 
 export const ToyStoreProvider = ({ children }) => {
   const navigate = useNavigate();
 
-  const [signIn, setSignIn] = useState(false); // state to tract that user icon is clicked or not
-
+  // State Variables
+  const [signIn, setSignIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
-  const [showOTP,setShowOTP] = useState(false);
-  const [showForgetpage,setShowForgetPage] = useState(false);
-
+  const [showOTP, setShowOTP] = useState(false);
+  const [showForgetpage, setShowForgetPage] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [animatePaymentForm, setAnimatePaymentForm] = useState(false);
+  const [CartClicked, setCartClicked] = useState(false);
+  const [singleProduct, setSingleProduct] = useState(null);
   const [sidebarState, setSidebarState] = useState({
     isOpen: false,
     product: null,
   });
-
   const [likedItems, setLikedItems] = useState(
     JSON.parse(localStorage.getItem("likedItems")) || []
   );
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [filters, setFilters] = useState({ ageRange: null, priceRange: null });
+  const [showMembershipPayment, setShowMembershipPayment] = useState(false);
+  const [memberShip, setMemberShip] = useState(false);
+  const [verifyMembership, setVerifyMembership] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [shippingPrice, setShippingPrice] = useState(0);
+  const { user } = useAuthStore();
 
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
+
+  const newArrival = useRef(null);
+
+  //function to store toggel show
+  const handleMembershipClick = () => {
+    setShowMembershipPayment(true);
+  };
+
+  // Local Storage Sync
   useEffect(() => {
     localStorage.setItem("likedItems", JSON.stringify(likedItems));
   }, [likedItems]);
 
+  useEffect(() => {
+    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
+    if (storedCartItems) {
+      setCartItems(storedCartItems);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (cartItems.length > 0) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
+
+  // Fetch Products
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(`${serverUrl}/api/shop`);
+        setProducts(response.data.products);
+      } catch (error) {
+        setError(error.message);
+        console.error("Error fetching products", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+    fetchProducts();
+  }, []);
+
+  //to fetch membership data from mongo
+  useEffect(() => {
+    const fetchMembership = async () => {
+      try {
+        const response = await axios.post(
+          `${serverUrl}/api/membership/fetch`,
+          { userId: user?._id } // Use optional chaining to safely access user._id
+        );
+
+        if (response.data.active) {
+          setMemberShip(true);
+        } else {
+          setMemberShip(false);
+        }
+      } catch (error) {
+        console.error("Error checking membership status:", error);
+      }
+    };
+
+    if (user && user._id) {
+      // Ensure user and user._id are defined
+      fetchMembership();
+    }
+  }, [user, verifyMembership]);
+
+  //fetch orders
+  useEffect(() => {
+    const fetchOrderHistory = async () => {
+      try {
+        if (user?._id) {
+          const response = await axios.get(
+            `${serverUrl}/api/orders/getOrderHistory`,
+            {
+              params: { user: user._id },
+            }
+          );
+          setOrders(response.data.orders);
+        }
+      } catch (err) {
+        console.error("Error fetching order history:", err);
+        setError("Failed to load order history.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderHistory();
+  }, [user?._id]);
+
+  // Like Functionality
   const handleLikeToggle = (product) => {
     setLikedItems((prevLikedItems) => {
       if (prevLikedItems.some((item) => item._id === product._id)) {
-        // If item is already liked, remove it
         return prevLikedItems.filter((item) => item._id !== product._id);
       }
-      // Otherwise, add the item
       return [...prevLikedItems, product];
     });
   };
@@ -46,43 +147,15 @@ export const ToyStoreProvider = ({ children }) => {
     toast.success(`${itemName} removed from cart`);
   };
 
-  const openSidebar = (product) => {
-    setSidebarState({ isOpen: true, product });
-  };
+  // Sidebar Controls
+  const openSidebar = (product) => setSidebarState({ isOpen: true, product });
 
-  const closeSidebar = () => {
-    setSidebarState({ isOpen: false, product: null });
-  };
+  const closeSidebar = () => setSidebarState({ isOpen: false, product: null });
 
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://localhost:5001/api/shop");
-      setProducts(response.data.products);
-    } catch (error) {
-      setError(error.message);
-      console.log("error fetching products", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  console.log("From mongodb", products);
-
-  //age and price filters
-  const [filters, setFilters] = useState({
-    ageRange: null,
-    priceRange: null,
-  });
-
-  // Helper function to parse ageGroup into a numerical value (in years)
+  // Filters and Helper Functions
   const parseAgeGroup = (ageGroup) => {
     if (ageGroup.includes("Month")) {
-      const months = parseInt(ageGroup.split(" ")[0], 10);
-      return months / 12; // Convert months to years
+      return parseInt(ageGroup.split(" ")[0], 10) / 12;
     }
     if (ageGroup.includes("Year")) {
       return parseInt(ageGroup.split(" ")[0], 10);
@@ -90,20 +163,16 @@ export const ToyStoreProvider = ({ children }) => {
     return 0;
   };
 
-  // Handle filter selection for age
   const handleAgeRangeClick = (range) => {
     setFilters((prev) => ({ ...prev, ageRange: range }));
   };
 
-  // Handle filter selection for price
   const handlePriceRangeClick = (range) => {
     setFilters((prev) => ({ ...prev, priceRange: range }));
     navigate("/product");
   };
 
-  // Filter products based on the selected filters
   const filteredProducts = products.filter((product) => {
-    // Age filter
     const productAge = parseAgeGroup(product.ageGroup);
     const ageMatches =
       !filters.ageRange ||
@@ -113,7 +182,6 @@ export const ToyStoreProvider = ({ children }) => {
       (filters.ageRange === "6-11" && productAge > 6 && productAge <= 11) ||
       (filters.ageRange === "11-19" && productAge > 11 && productAge <= 19);
 
-    // Price filter
     const priceMatches =
       !filters.priceRange ||
       (filters.priceRange === "0-200" &&
@@ -129,43 +197,31 @@ export const ToyStoreProvider = ({ children }) => {
         product.price > 1000 &&
         product.price <= 2000);
 
-    return ageMatches && priceMatches; // Both conditions must match
+    return ageMatches && priceMatches;
   });
 
-  //state to mention that user is logged in or not
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  //state to store add to cart items
-  const [cartItems, setCartItems] = useState([]);
-
-  // Store cart items in local storage
+  // Cart Functionality
   const storeCartInLocalStorage = (updatedCart) => {
     localStorage.setItem("cartItems", JSON.stringify(updatedCart));
   };
 
-  // When adding to cart
   const addToCart = (product) => {
     const existingItemIndex = cartItems.findIndex(
       (item) => item.name === product.name
     );
-
-    let updatedCart = [];
-
-    if (existingItemIndex === -1) {
-      updatedCart = [...cartItems, { ...product, cartQuantity: 1 }];
-    } else {
-      updatedCart = cartItems.map((item) =>
-        item.name === product.name
-          ? { ...item, cartQuantity: item.cartQuantity + 1 }
-          : item
-      );
-    }
+    const updatedCart =
+      existingItemIndex === -1
+        ? [...cartItems, { ...product, cartQuantity: 1 }]
+        : cartItems.map((item) =>
+            item.name === product.name
+              ? { ...item, cartQuantity: item.cartQuantity + 1 }
+              : item
+          );
 
     setCartItems(updatedCart);
-    storeCartInLocalStorage(updatedCart); // Save to local storage
+    storeCartInLocalStorage(updatedCart);
   };
 
-  // Increment item quantity
   const incrementQuantity = (itemName) => {
     const updatedCart = cartItems.map((item) =>
       item.name === itemName
@@ -173,10 +229,9 @@ export const ToyStoreProvider = ({ children }) => {
         : item
     );
     setCartItems(updatedCart);
-    storeCartInLocalStorage(updatedCart); // Save to local storage
+    storeCartInLocalStorage(updatedCart);
   };
 
-  // Decrement item quantity
   const decrementQuantity = (itemName) => {
     const updatedCart = cartItems
       .map((item) =>
@@ -184,42 +239,26 @@ export const ToyStoreProvider = ({ children }) => {
           ? { ...item, cartQuantity: item.cartQuantity - 1 }
           : item
       )
-      .filter((item) => item.cartQuantity > 0); // Ensure item is not removed if cartQuantity is 0
+      .filter((item) => item.cartQuantity > 0);
 
     setCartItems(updatedCart);
-    storeCartInLocalStorage(updatedCart); // Save to local storage
+    storeCartInLocalStorage(updatedCart);
   };
 
-  // Remove from cart
   const removeFromCart = (itemName) => {
     const updatedCart = cartItems.filter((item) => item.name !== itemName);
     setCartItems(updatedCart);
     toast.success(`${itemName} removed from cart`);
-    storeCartInLocalStorage(updatedCart); // Save to local storage
+    storeCartInLocalStorage(updatedCart);
   };
 
-  // Retrieve cart items from localStorage on initial load
-  useEffect(() => {
-    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
-    if (storedCartItems) {
-      setCartItems(storedCartItems); // Load from localStorage
-    }
-  }, []);
-
-  // Save cart items to localStorage whenever they change
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    }
-  }, [cartItems]);
-
-  // Calculate total price
   const calculateTotal = () => {
     return cartItems
       .reduce((total, item) => total + item.price * item.cartQuantity, 0)
       .toFixed(2);
   };
 
+  // User Authentication
   const Login = () => {
     setIsLoggedIn(true);
     localStorage.setItem("userLogin", "true");
@@ -235,15 +274,14 @@ export const ToyStoreProvider = ({ children }) => {
       value={{
         products,
         setProducts,
-        fetchProducts,
         loading,
         setLoading,
         isLoggedIn,
         setIsLoggedIn,
         likedItems,
-        Login,
-        Logout,
+        setLikedItems,
         handleLikeToggle,
+        removeFromLiked,
         cartItems,
         setCartItems,
         addToCart,
@@ -257,13 +295,34 @@ export const ToyStoreProvider = ({ children }) => {
         filteredProducts,
         handleAgeRangeClick,
         handlePriceRangeClick,
-        removeFromLiked,
         signIn,
         setSignIn,
-        setShowOTP,
         showOTP,
-        setShowForgetPage,
+        setShowOTP,
         showForgetpage,
+        setShowForgetPage,
+        singleProduct,
+        setSingleProduct,
+        showPayment,
+        setShowPayment,
+        animatePaymentForm,
+        setAnimatePaymentForm,
+        CartClicked,
+        setCartClicked,
+        Login,
+        Logout,
+        showMembershipPayment,
+        setShowMembershipPayment,
+        handleMembershipClick,
+        memberShip,
+        setMemberShip,
+        setVerifyMembership,
+        verifyMembership,
+        orders,
+        setOrders,
+        newArrival,
+        shippingPrice,
+        setShippingPrice,
       }}
     >
       {children}

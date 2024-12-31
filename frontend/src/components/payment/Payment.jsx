@@ -1,276 +1,177 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { ToyStore } from "../context/ContextApi";
+import { useAuthStore } from "../store/authStore";
+import axios from "axios";
 
 const Payment = () => {
-  // State to store form details
   const [billingDetails, setBillingDetails] = useState({
     firstName: "",
     lastName: "",
-    companyName: "",
-    country: "India",
     streetAddress: "",
-    apartment: "",
     city: "",
     state: "",
     postcode: "",
     phone: "",
     email: "",
-    orderNotes: "",
   });
 
-  const {cartItems} = useContext(ToyStore);
+  const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-  // Calculate Subtotal and Total
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
-  const total = subtotal; // Adjust if taxes/shipping apply
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Handle input change
+  const { cartItems, singleProduct, setShowPayment, setCartClicked, setShippingPrice } = useContext(ToyStore);
+  const navigate = useNavigate();
+  const { user } = useAuthStore.getState();
+
+  const isSingleProduct = singleProduct !== null;
+  const orderItems = isSingleProduct ? [{ ...singleProduct, cartQuantity: 1 }] : cartItems;
+
+  const calculateItemsPrice = (items) => {
+    return items.reduce((total, item) => {
+      const quantity = item.cartQuantity || item.quantity || 1;
+      return total + item.price * quantity;
+    }, 0);
+  };
+
+  const calculateShippingPrice = (address) => {
+    return address.country === "USA" ? 30 : 50;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setBillingDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
+    setBillingDetails((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Order Details:", {
-      billingDetails,
-      cartItems,
-      subtotal,
-      total,
-    });
-    // You can send this data to your backend for order processing
+    setIsLoading(true);
+
+    try {
+      const itemsPrice = calculateItemsPrice(orderItems);
+      const shippingPrice = calculateShippingPrice({ ...billingDetails, country: "India" });
+
+      const orderData = {
+        user: user,
+        orderItems: orderItems.map((item) => ({
+          _id: item._id,
+          name: item.name,
+          price: item.price,
+          image: item.image,
+          color: item.color,
+          quantity: item.cartQuantity || 1,
+          discount: item.discount || 0,
+        })),
+        shippingAddress: {
+          ...billingDetails,
+          country: "India",
+          apartment: "",
+        },
+        itemsPrice,
+        shippingPrice,
+      };
+
+
+      const response = await axios.post(
+        `${serverUrl}/api/orders/saveAddress`,
+        orderData
+      );
+
+      if (!response.data.success || !response.data.order) {
+        throw new Error("Failed to create order");
+      }
+      setShowPayment(false);
+      setCartClicked(false);
+      setShippingPrice(response.data.shippingFee);
+      navigate("/payment-confirmation", {
+        state: {
+          orderData,
+        },
+      });
+    } catch (error) {
+      console.error("Error processing order:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  const inputFields = [
+    { name: "firstName", type: "text", placeholder: "First Name" },
+    { name: "lastName", type: "text", placeholder: "Last Name" },
+    { name: "streetAddress", type: "text", placeholder: "Street Address" },
+    { name: "city", type: "text", placeholder: "City" },
+    { name: "state", type: "text", placeholder: "State" },
+    { name: "postcode", type: "text", placeholder: "Postcode" },
+    { name: "phone", type: "tel", placeholder: "Phone" },
+    { name: "email", type: "email", placeholder: "Email" },
+  ];
 
   return (
-    <div>
-      <div className="bg-white rounded-lg mb-10">
-        {/* Billing Details Section */}
-        <div className="p-6">
-          <h3 className="text-2xl font-semibold mb-4">Billing Details</h3>
-          <form
-            className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-6"
-            onSubmit={handleSubmit}
+    <div className="flex justify-center items-center min-h-screen py-28 bg-gray-100">
+      <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-8">
+        <h3 className="text-3xl font-semibold text-gray-800 mb-6 text-center">
+          Billing Details
+        </h3>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          {inputFields.map((field) => (
+            <div key={field.name}>
+              <label
+                htmlFor={field.name}
+                className="block text-gray-600 font-medium mb-1"
+              >
+                {field.placeholder}
+              </label>
+              <input
+                id={field.name}
+                type={field.type}
+                name={field.name}
+                value={billingDetails[field.name]}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-rose-500"
+                placeholder={field.placeholder}
+                required
+              />
+            </div>
+          ))}
+          <button
+            type="submit"
+            className={`mt-6 w-full py-3 rounded-lg text-white ${
+              isLoading
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-rose-500 hover:bg-rose-600"
+            }`}
+            disabled={isLoading}
           >
-            {/* First Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                First Name *
-              </label>
-              <input
-                type="text"
-                name="firstName"
-                value={billingDetails.firstName}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="First Name"
-                required
-              />
-            </div>
-
-            {/* Last Name */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Last Name *
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                value={billingDetails.lastName}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Last Name"
-                required
-              />
-            </div>
-
-            {/* Company Name */}
-            <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Company Name (Optional)
-              </label>
-              <input
-                type="text"
-                name="companyName"
-                value={billingDetails.companyName}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Company Name"
-              />
-            </div>
-
-            {/* Street Address */}
-            <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Street Address *
-              </label>
-              <input
-                type="text"
-                name="streetAddress"
-                value={billingDetails.streetAddress}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Street Address"
-                required
-              />
-            </div>
-
-            {/* Apartment */}
-            <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Apartment, Suite, etc. (Optional)
-              </label>
-              <input
-                type="text"
-                name="apartment"
-                value={billingDetails.apartment}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Apartment, Suite, etc."
-              />
-            </div>
-
-            {/* City */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Town / City *
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={billingDetails.city}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="City"
-                required
-              />
-            </div>
-
-            {/* State */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                State / County *
-              </label>
-              <input
-                type="text"
-                name="state"
-                value={billingDetails.state}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="State"
-                required
-              />
-            </div>
-
-            {/* Postcode */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Postcode / ZIP *
-              </label>
-              <input
-                type="text"
-                name="postcode"
-                value={billingDetails.postcode}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Postcode"
-                required
-              />
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Phone *
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={billingDetails.phone}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Phone"
-                required
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email Address *
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={billingDetails.email}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Email"
-                required
-              />
-            </div>
-
-            {/* Order Notes */}
-            <div className="lg:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">
-                Order Notes (Optional)
-              </label>
-              <textarea
-                name="orderNotes"
-                value={billingDetails.orderNotes}
-                onChange={handleChange}
-                className="w-full mt-2 p-2 border rounded-md"
-                placeholder="Notes about your order, e.g. special notes for delivery."
-              ></textarea>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="mt-6 w-full bg-black text-white py-3 rounded-lg hover:bg-gray-700"
-            >
-              Place Order
-            </button>
-          </form>
-        </div>
-
-        {/* Order Recap Section */}
-        <div className="p-6 border-t bg-gray-50">
-          <h4 className="text-2xl font-semibold mb-4">Your Order</h4>
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            {/* Dynamically Render Cart Items */}
-            {cartItems.map((item, index) => (
-              <div key={index} className="flex justify-between mb-4">
-                <p>{item.name}</p>
-                <p>{item.quantity} × ₹{item.price.toFixed(2)}</p>
+            {isLoading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <svg
+                  className="w-5 h-5 animate-spin text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                <span>Processing...</span>
               </div>
-            ))}
-
-            {/* Subtotal */}
-            <div className="flex justify-between font-bold mb-4">
-              <p>Subtotal</p>
-              <p>₹{subtotal.toFixed(2)}</p>
-            </div>
-
-            {/* Total */}
-            <div className="flex justify-between font-bold">
-              <p>Total</p>
-              <p>₹{total.toFixed(2)}</p>
-            </div>
-
-            {/* Payment Info */}
-            <div className="mt-6">
-              <h5 className="text-xl font-semibold">Payment Method</h5>
-              <p className="text-sm text-gray-600 mt-2">
-                Pay securely by Credit or Debit card or Internet Banking through
-                Razorpay.
-              </p>
-            </div>
-          </div>
-        </div>
+            ) : (
+              "Proceed to Payment"
+            )}
+          </button>
+        </form>
       </div>
     </div>
   );
