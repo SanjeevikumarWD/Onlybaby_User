@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Define the order schema
 const orderSchema = new mongoose.Schema(
   {
     user: {
@@ -86,7 +87,7 @@ const orderSchema = new mongoose.Schema(
         },
         draftExpiresAt: {
           type: Date,
-          default: () => new Date(Date.now() + 60 * 60 * 1000), // 1-hour expiry
+          default: () => new Date(Date.now() + 1 * 60 * 1000), // Expiry set to 1 minute from now
         },
         isDelivered: {
           type: Boolean,
@@ -126,5 +127,10 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+// Create TTL index for automatic deletion
+orderSchema.index({ draftExpiresAt: 1 }, { expireAfterSeconds: 0 });
+
+// Create the Order model
 const Order = mongoose.model("Order", orderSchema);
+
 export default Order;

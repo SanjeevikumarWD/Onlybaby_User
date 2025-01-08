@@ -11,7 +11,7 @@ const PaymentConfirmation = () => {
   const { state } = useLocation();
   const { user } = useAuthStore.getState();
   const navigate = useNavigate();
-  const { orders, memberShip, shippingPrice} = useContext(ToyStore);
+  const { orders, memberShip, shippingPrice } = useContext(ToyStore);
   const serverUrl = import.meta.env.VITE_SERVER_URL;
 
   const {
@@ -35,7 +35,7 @@ const PaymentConfirmation = () => {
 
   const subtotal = itemsPrice + shippingPrice;
 
-  const discount = memberShip? 0.1 * subtotal : 0; // 10% discount if memberShipis true
+  const discount = memberShip ? 0.1 * subtotal : 0; // 10% discount if memberShipis true
   const grandTotal = subtotal - discount;
 
   const containerVariants = {
@@ -89,14 +89,11 @@ const PaymentConfirmation = () => {
             razorpaySecretKey
           );
 
-          await axios.post(
-            `${serverUrl}/api/orders/verify`,
-            {
-              razorpayOrderId: razorpay_order_id,
-              razorpayPaymentId: razorpay_payment_id,
-              razorpaySignature: generatedSignature,
-            }
-          );
+          await axios.post(`${serverUrl}/api/orders/verify`, {
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id,
+            razorpaySignature: generatedSignature,
+          });
 
           navigate("/"); // Navigate to homepage after successful verification
         },
@@ -121,128 +118,156 @@ const PaymentConfirmation = () => {
   };
 
   return (
-    <motion.div
-      className="container mx-auto p-6 lg:p-10 relative mt-14 mb-18"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      <h2 className="text-3xl lg:text-4xl font-semibold text-gray-800 mb-8 text-center">
-        Payment Confirmation
-      </h2>
-
-      {/* Billing Details */}
-      <motion.div
-        className="bg-white text-black shadow-xl rounded-lg p-8 pb-20 mb-8 relative"
-        variants={itemVariants}
-      >
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-          Billing Details
-        </h3>
-        <button
-          onClick={handleExit}
-          className="absolute top-7 right-5 text-4xl text-gray-800 hover:text-red-600"
-        >
-          <span>&times;</span>
-        </button>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {[
-            { label: "First Name", value: firstName || user.firstName },
-            { label: "Last Name", value: lastName || user.lastName },
-            { label: "Email", value: email || user.email },
-            { label: "Phone", value: phone || "N/A" },
-            { label: "Address", value: streetAddress || "N/A" },
-            { label: "City", value: city || "N/A" },
-            { label: "State", value: region || "N/A" },
-            { label: "Country", value: country || "N/A" },
-          ].map((detail, index) => (
-            <div
-              key={index}
-              className="bg-white bg-opacity-60 p-5 rounded-lg shadow-md hover:shadow-xl transition duration-300 ease-in-out"
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 ">
+      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        {/* Bill Header */}
+        <div className="bg-gray-800 text-white px-8 py-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold">INVOICE</h1>
+              <p className="text-gray-300 mt-1">Order Summary</p>
+            </div>
+            <button
+              onClick={handleExit}
+              className="text-gray-300 hover:text-white transition-colors"
             >
-              <div>
-                <p className="text-xs uppercase font-semibold text-gray-500 tracking-wider">
-                  {detail.label}
-                </p>
-                <p className="text-xl font-medium text-gray-800 mt-1">
-                  {detail.value}
-                </p>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Bill Content */}
+        <div className="px-8 py-6">
+          {/* Customer Details */}
+          <div className="grid grid-cols-2 gap-8 mb-8 pb-8 border-b border-gray-200">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                Bill To:
+              </h2>
+              <p className="font-medium text-gray-700">{`${
+                firstName || user.firstName
+              } ${lastName || user.lastName}`}</p>
+              <p className="text-gray-600">{email || user.email}</p>
+              <p className="text-gray-600">{phone || "N/A"}</p>
+              <p className="text-gray-600">{streetAddress || "N/A"}</p>
+              <p className="text-gray-600">{`${city || "N/A"}, ${
+                region || "N/A"
+              }`}</p>
+              <p className="text-gray-600">{country || "N/A"}</p>
+            </div>
+            <div className="text-right">
+              <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                Order Details:
+              </h2>
+              <p className="text-gray-600">
+                Date: {new Date().toLocaleDateString()}
+              </p>
+              <p className="text-gray-600">
+                Order ID: #
+                {Math.random().toString(36).substr(2, 9).toUpperCase()}
+              </p>
+            </div>
+          </div>
+
+          {/* Order Items */}
+          <div className="mb-8">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-2 text-gray-600">Item</th>
+                  <th className="text-center py-3 px-2 text-gray-600">Qty</th>
+                  <th className="text-right py-3 px-2 text-gray-600">Price</th>
+                  <th className="text-right py-3 px-2 text-gray-600">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderItems.map((item) => (
+                  <tr key={item._id} className="border-b border-gray-100">
+                    <td className="py-4 px-2">
+                      <div className="flex items-center">
+                        <img
+                          src={item.image[0]}
+                          alt={item.name}
+                          className="w-16 h-16 object-cover rounded mr-4"
+                        />
+                        <div>
+                          <p className="font-medium text-gray-800">
+                            {item.name}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Color: {item.color}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-center py-4 px-2 text-gray-700">
+                      {item.quantity}
+                    </td>
+                    <td className="text-right py-4 px-2 text-gray-700">
+                      ₹{item.price}
+                    </td>
+                    <td className="text-right py-4 px-2 text-gray-700">
+                      ₹{item.price * item.quantity}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Bill Summary */}
+          <div className="border-t border-gray-200 pt-8">
+            <div className="w-full md:w-1/2 ml-auto">
+              <div className="space-y-3">
+                <div className="flex justify-between text-gray-600">
+                  <span>Subtotal</span>
+                  <span>₹{itemsPrice}</span>
+                </div>
+                <div className="flex justify-between text-gray-600">
+                  <span>Shipping</span>
+                  <span>
+                    {shippingPrice === 0 ? "Free" : `₹${shippingPrice}`}
+                  </span>
+                </div>
+                {memberShip && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Membership Discount</span>
+                    <span>- ₹{discount.toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-lg font-bold text-gray-800 pt-3 border-t">
+                  <span>Total</span>
+                  <span>₹{grandTotal.toFixed(2)}</span>
+                </div>
               </div>
             </div>
-          ))}
+          </div>
         </div>
-      </motion.div>
 
-      {/* Order Details */}
-      <motion.div
-        className="bg-white shadow-xl rounded-lg p-8 mb-8"
-        variants={itemVariants}
-      >
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-          Order Details
-        </h3>
-        <ul className="divide-y divide-gray-200 text-gray-700">
-          {orderItems.map((item) => (
-            <motion.li key={item._id} className="flex items-center py-6">
-              <motion.img
-                src={item.image[0]}
-                alt={item.name}
-                className="w-28 h-28 object-cover rounded-lg shadow-md mr-6"
-              />
-              <div className="ml-4">
-                <h4 className="text-xl font-medium text-gray-800">
-                  {item.name}
-                </h4>
-                <p className="text-sm text-gray-600 mt-1">
-                  Color: {item.color}
-                </p>
-                <p className="text-sm text-gray-600 mt-1">
-                  Quantity: {item.quantity}
-                </p>
-                <p className="text-base font-semibold text-gray-900 mt-2">
-                  ₹{item.price * item.quantity}
-                </p>
-              </div>
-            </motion.li>
-          ))}
-        </ul>
-
-        <div className="mt-8 space-y-4">
-          <p className="text-lg font-medium text-gray-800">
-            <strong>Items Total:</strong> ₹{itemsPrice}
-          </p>
-          <p className="text-lg font-medium text-gray-800">
-            <strong>Shipping Price:</strong>{" "}
-            {shippingPrice === 0 ? (
-              <span>
-                <del>₹0</del>{" "}
-                <span className="text-green-600">Free</span>
-              </span>
-            ) : (
-              `₹${shippingPrice}`
-            )}
-          </p>
-          {memberShip&& (
-            <p className="text-lg font-medium text-gray-800">
-              <strong>Membership Discount:</strong>{" "}
-              <span className="text-green-600">- ₹{discount.toFixed(2)}</span>
-            </p>
-          )}
-          <p className="text-2xl font-bold text-gray-900">
-            <strong>Grand Total:</strong> ₹{grandTotal.toFixed(2)}
-          </p>
+        {/* Payment Button */}
+        <div className="px-8 py-6 bg-gray-50">
+          <button
+            onClick={handlePayment}
+            className="w-full bg-gray-800 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors duration-200 flex items-center justify-center space-x-2"
+          >
+            <span>Proceed to Payment</span>
+            <span>₹{grandTotal.toFixed(2)}</span>
+          </button>
         </div>
-      </motion.div>
-
-      <motion.button
-        whileHover={{ scale: 1.05, backgroundColor: "#1a202c" }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handlePayment}
-        className="bg-black text-white py-3 px-6 rounded-lg w-full max-w-md mx-auto block text-lg font-medium"
-      >
-        Proceed to Pay
-      </motion.button>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 

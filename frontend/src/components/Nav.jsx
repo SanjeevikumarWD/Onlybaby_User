@@ -25,8 +25,6 @@ import { useAuthStore } from "./store/authStore";
 import Payment from "./payment/Payment";
 import OtpVerification from "./registerLogin/OtpVerification";
 import ForgetPassword from "./registerLogin/ForgetPassword";
-import PaymentForm from "./payment/PaymentForm";
-import SingleProduct from "./product/SingleProduct";
 import MembershipSidebar from "./membership/MembershipSidebar";
 import axios from "axios";
 
@@ -76,8 +74,6 @@ const Nav = () => {
     likedItems,
     signIn,
     setSignIn,
-    setAnimatePaymentForm,
-    animatePaymentForm,
     showMembershipPayment,
     setShowMembershipPayment,
     orders,
@@ -843,30 +839,7 @@ const Nav = () => {
         </div>
       )}
 
-      {/* //animate payment */}
-      {animatePaymentForm && (
-        <div
-          className="absolute top-0 right-0 w-10/12 overflow-y-auto lg:w-7/12 h-screen bg-blue-50 shadow-md border-2 transform transition-transform duration-500 ease-in-out"
-          ref={modalRef}
-        >
-          <div className="flex items-center justify-between p-3 text-black">
-            <div className="font-thin text-2xl">
-              <i>OnlyBaby OTP Verification</i>
-            </div>
-            {/* Close Icon */}
-            <button
-              onClick={() => setAnimatePaymentForm(false)}
-              className="text-2xl"
-            >
-              <X />
-            </button>
-          </div>
-          <div className="h-screen  border-2 overflow-y-auto bg-blue-100">
-            <PaymentForm />
-          </div>
-        </div>
-      )}
-
+    
       {/* forgetpassword  */}
       {showForgetpage && (
         <div

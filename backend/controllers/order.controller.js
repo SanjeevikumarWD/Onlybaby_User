@@ -10,7 +10,7 @@ dotenv.config();
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const whatsappNumber = process.env.WHATSAPP_NUMBER; // Your Twilio WhatsApp number
+const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Your Twilio WhatsApp number
 const storeOwnerNumber = process.env.STORE_OWNER_WHATSAPP;
 const client = twilio(accountSid, authToken);
 
@@ -223,6 +223,156 @@ export const initiatePayment = async (req, res) => {
   }
 };
 
+
+// export const verifyPayment = async (req, res) => {
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+//   try {
+//     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+
+//     // Find the user's order that has the matching razorpayOrderId
+//     const userOrder = await Order.findOne({
+//       "orders.payment.razorpayOrderId": razorpayOrderId,
+//     }).session(session);
+
+//     if (!userOrder) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Order not found",
+//       });
+//     }
+
+//     // Find the order in the user's order list
+//     const orderIndex = userOrder.orders.findIndex(
+//       (order) => order.payment.razorpayOrderId === razorpayOrderId
+//     );
+
+//     if (orderIndex === -1) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Draft order not found",
+//       });
+//     }
+
+//     // Generate the payment signature and compare it with the received signature
+//     const generatedSignature = crypto
+//       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+//       .update(`${razorpayOrderId}|${razorpayPaymentId}`)
+//       .digest("base64");
+
+//     if (generatedSignature !== razorpaySignature) {
+//       // Update payment status to failed if signatures do not match
+//       userOrder.orders[orderIndex].payment = {
+//         ...userOrder.orders[orderIndex].payment,
+//         paymentStatus: "failed",
+//         paymentMessage: "Invalid payment signature",
+//       };
+//       await userOrder.save();
+
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid payment signature",
+//       });
+//     }
+
+//     // Update the payment details and mark the order as paid
+//     userOrder.orders[orderIndex].payment = {
+//       razorpayOrderId,
+//       razorpayPaymentId,
+//       razorpaySignature,
+//       isPaid: true,
+//       paidAt: new Date(),
+//       paymentStatus: "successful",
+//       paymentMethod: "razorpay",
+//     };
+
+//     // Mark the order as no longer a draft
+//     userOrder.orders[orderIndex].isDraft = false;
+
+//     // Save the updated user order document
+//     await userOrder.save();
+
+//     const orderDetails = userOrder.orders[orderIndex];
+
+//     // const orderDetails = userOrder.orders[orderIndex];
+//     for (const item of orderDetails.orderItems) {
+//       const product = await Product.findById(item._id).session(session);
+
+//       if (!product || product.quantity < item.quantity) {
+//         throw new Error(`Insufficient stock for product ${item.name}`);
+//       }
+
+//       await Product.findByIdAndUpdate(
+//         item._id,
+//         { $inc: { quantity: -item.quantity } },
+//         { new: true, session }
+//       );
+//     }
+
+//     // Save the updated user order document
+//     await userOrder.save({ session });
+
+//     const itemsList = orderDetails.orderItems
+//       .map(
+//         (item) => `${item.name} (x${item.quantity}): ₹${item.price.toFixed(2)}`
+//       )
+//       .join("\n");
+
+//     // Debugging: log the parameters being sent
+//     console.log({
+//       razorpayOrderId,
+//       orderDetails: orderDetails.shippingAddress,
+//       itemsList,
+//       totalPrice: `₹${orderDetails.totalPrice.toFixed(2)}`,
+//       paidAt: new Date(orderDetails.payment.paidAt).toLocaleString(),
+//     });
+
+//     // Send the WhatsApp message using the approved template
+//     await client.messages.create({
+//       from: `whatsapp:${process.env.TWILIO_WHATSAPP_NUMBER}`, // Twilio's WhatsApp-enabled number
+//       to: `whatsapp:${process.env.STORE_OWNER_NUMBER}`, // Store owner's WhatsApp number
+//       messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID, // Messaging service SID
+//       contentSid: "HXd4103e91b4f8e046657ed37d945a35af", // Content template SID
+//       template: {
+//         name: "onlybaby", // Approved template name
+//         language: { code: "en" }, // Template language
+//         components: [
+//           {
+//             type: "body",
+//             parameters: [
+//               { type: "text", text: razorpayOrderId },  // {{1}} - Order ID
+//               { type: "text", text: orderDetails.shippingAddress.firstName },  // {{2}} - First Name
+//               { type: "text", text: orderDetails.shippingAddress.lastName },  // {{3}} - Last Name
+//               { type: "text", text: orderDetails.shippingAddress.streetAddress },  // {{4}} - Address
+//               { type: "text", text: orderDetails.shippingAddress.city },  // {{5}} - City
+//               { type: "text", text: orderDetails.shippingAddress.state },  // {{6}} - State
+//               { type: "text", text: orderDetails.shippingAddress.postcode },  // {{7}} - Postal Code
+//               { type: "text", text: itemsList },  // {{8}} - Items List
+//               { type: "text", text: orderDetails.shippingAddress.phone },  // {{9}} - Purchaser Number
+//               { type: "text", text: `₹${orderDetails.totalPrice.toFixed(2)}` },  // {{10}} - Total Price
+//               { type: "text", text: new Date(orderDetails.payment.paidAt).toLocaleString() },  // {{11}} - Paid At
+//             ],
+//           },
+//         ],
+//       },
+//     });
+
+//     await session.commitTransaction();
+//     session.endSession();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Payment verified successfully",
+//       order: userOrder.orders[orderIndex],
+//     });
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     console.error("Error in verifyPayment:", error.message);
+//     res.status(500).json({ success: false, message: "Internal server error" });
+//   }
+// };
+
 export const verifyPayment = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -367,7 +517,8 @@ ${itemsList}
   }
 };
 
-// Backend: Get user's order history
+
+
 export const getOrderHistory = async (req, res) => {
   try {
     // Read the user ID from the query parameters for GET requests

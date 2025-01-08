@@ -3,6 +3,7 @@ import axios from "axios";
 
 
 
+const api_url = import.meta.env.VITE_SERVER_URL
 
 export const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -11,12 +12,13 @@ export const useAuthStore = create((set) => ({
   isCheckingAuth: false,
   message: null,
 
+
   signup: async (email, name, password) => {
     set({ error: null });
 
     try {
       const response = await axios.post(
-        `${api_url}/signup`,
+        `${api_url}/api/auth/signup`,
         {
           name,
           email,
@@ -44,7 +46,7 @@ export const useAuthStore = create((set) => ({
   verifyEmail: async (code) => {
     set({ error: null });
     try {
-      const response = await axios.post(`${api_url}/verifyEmail`, { code });
+      const response = await axios.post(`${api_url}/api/auth/verifyEmail`, { code });
       const user = response.data.user;
       localStorage.setItem("user", JSON.stringify(user)); // Store user in localStorage
       set({ user, isAuthenticated: true });
@@ -57,7 +59,7 @@ export const useAuthStore = create((set) => ({
   checkAuth: async () => {
     set({ isCheckingAuth: true, error: null });
     try {
-      const response = await axios.get(`${api_url}/check-Auth`);
+      const response = await axios.get(`${api_url}/api/auth/check-Auth`);
       const user = response.data.user;
       localStorage.setItem("user", JSON.stringify(user)); // Store user in localStorage
       set({ user, isAuthenticated: true, isCheckingAuth: false });
@@ -70,11 +72,12 @@ export const useAuthStore = create((set) => ({
   login: async (email, password) => {
     set({ error: null });
     try {
-      const response = await axios.post(`${api_url}/login`, {
+      const response = await axios.post(`${api_url}/api/auth/login`, {
         email,
         password,
       });
       const user = response.data.user;
+      console.log(user);
       localStorage.setItem("user", JSON.stringify(user)); // Store user in localStorage
       set({ user, isAuthenticated: true });
       return user; // Return the user object
@@ -86,7 +89,7 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await axios.post(`${api_url}/logout`); // Send a simple logout request
+      await axios.post(`${api_url}/api/auth/logout`); // Send a simple logout request
       set({ user: null, isAuthenticated: false });
     } catch (error) {
       set({ error: "Error logging out" });
@@ -97,7 +100,7 @@ export const useAuthStore = create((set) => ({
   forgotPassword: async (email) => {
     set({ error: null });
     try {
-      const response = await axios.post(`${api_url}/forgotPassword`, { email });
+      const response = await axios.post(`${api_url}/api/auth/forgotPassword`, { email });
       set({ message: response.data.message });
     } catch (error) {
       set({
@@ -112,7 +115,7 @@ export const useAuthStore = create((set) => ({
   resetPassword: async (token, password) => {
     set({ error: null });
     try {
-      const response = await axios.post(`${api_url}/resetPassword/${token}`, {
+      const response = await axios.post(`${api_url}/api/auth/resetPassword/${token}`, {
         password,
       });
       set({ message: response.data.message });
