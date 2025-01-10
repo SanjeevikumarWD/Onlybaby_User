@@ -91,3 +91,85 @@ export const sendResetSuccessEmail = async(email) => {
         throw new Error(error.message);
     }   
 }
+
+export const sendOrderSuccessEmail = async (orderDetails) => {
+    try {
+      const recipient = orderDetails.shippingAddress.email;
+      const itemsList = orderDetails.orderItems
+        .map(
+          (item) => `${item.name} (x${item.quantity}): ₹${item.price.toFixed(2)}`
+        )
+        .join("<br>");
+  
+      const mailOptions = {
+        from: {
+          name: "Only Baby",
+          address: process.env.USER,
+        },
+        to: recipient,
+        subject: "Your Order Confirmation",
+        html: `
+          <h2>Thank you for your order!</h2>
+          <p><strong>Order ID:</strong> ${orderDetails.payment.razorpayOrderId}</p>
+          <p><strong>Shipping Address:</strong><br>
+             ${orderDetails.shippingAddress.firstName} ${orderDetails.shippingAddress.lastName}<br>
+             ${orderDetails.shippingAddress.streetAddress}<br>
+             ${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.state} - ${orderDetails.shippingAddress.postcode}
+          </p>
+          <p><strong>Order Details:</strong><br>
+             ${itemsList}
+          </p>
+          <p><strong>Total Price:</strong> ₹${orderDetails.totalPrice.toFixed(2)}</p>
+          <p>We will notify you once your order is shipped. Thank you for shopping with Only Baby!</p>
+        `,
+      };
+  
+      await sendMail(transporter, mailOptions);
+    } catch (error) {
+      console.log("Error in sending order success email", error.message);
+      throw new Error(error.message);
+    }
+  };
+  
+
+  export const sendOrderToOwnerEmail = async (orderDetails) => {
+    try {
+      const ownerEmail = process.env.USER; // Owner's email address
+      const itemsList = orderDetails.orderItems
+        .map(
+          (item) => `${item.name} (x${item.quantity}): ₹${item.price.toFixed(2)}`
+        )
+        .join("<br>");
+  
+      const mailOptions = {
+        from: {
+          name: "Only Baby Orders",
+          address: process.env.USER,
+        },
+        to: ownerEmail, // Send the email to the owner
+        subject: `New Order Received: ${orderDetails.payment.razorpayOrderId}`,
+        html: `
+          <h2>New Order Received</h2>
+          <p><strong>Order ID:</strong> ${orderDetails.payment.razorpayOrderId}</p>
+          <p><strong>Customer Name:</strong> ${orderDetails.shippingAddress.firstName} ${orderDetails.shippingAddress.lastName}</p>
+          <p><strong>Shipping Address:</strong><br>
+             ${orderDetails.shippingAddress.firstName} ${orderDetails.shippingAddress.lastName}<br>
+             ${orderDetails.shippingAddress.streetAddress}<br>
+             ${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.state} - ${orderDetails.shippingAddress.postcode}
+          </p>
+          <p><strong>Order Details:</strong><br>
+             ${itemsList}
+          </p>
+          <p><strong>Total Price:</strong> ₹${orderDetails.totalPrice.toFixed(2)}</p>
+          <p>Thank you for managing the orders efficiently!</p>
+        `,
+      };
+  
+      await sendMail(transporter, mailOptions);
+      console.log("Order email sent to owner successfully.");
+    } catch (error) {
+      console.log("Error in sending order email to owner:", error.message);
+      throw new Error(error.message);
+    }
+  };
+  
