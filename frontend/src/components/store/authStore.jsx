@@ -77,7 +77,7 @@ export const useAuthStore = create((set) => ({
         password,
       });
       const user = response.data.user;
-      console.log(user);
+      
       localStorage.setItem("user", JSON.stringify(user)); // Store user in localStorage
       set({ user, isAuthenticated: true });
       return user; // Return the user object
