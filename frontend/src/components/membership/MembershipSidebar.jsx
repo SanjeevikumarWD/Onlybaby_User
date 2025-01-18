@@ -21,7 +21,7 @@ const MembershipSidebar = ({ onClose, userId }) => {
     additionalBenefits: [
       "Priority Customer Support",
       "Early Access to New Products",
-      "Free Shipping on All Orders",
+      "10% discount on All Orders",
       "Exclusive Member-Only Events",
     ],
     amount: "₹1000",

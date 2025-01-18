@@ -24,7 +24,7 @@ const Footer = () => {
 
   return (
     <FadeInOnScroll threshold={0.1}>
-      <footer className="px-4 bg-gradient-to-b from-rose-50 to-white">
+      <footer className="px-4 pt-28 bg-gradient-to-b from-rose-50 to-white">
         <div className="container flex flex-col justify-between py-10 mx-auto space-y-8 lg:block lg:space-x-2">
           {/* Logo and Tagline */}
           <div className="lg:w-1/4">
@@ -101,7 +101,7 @@ const Footer = () => {
               <div className="flex space-x-4">
                 {/* WhatsApp */}
                 <a
-                  href="https://wa.me/1234567890"
+                  href="https://wa.me/9790177999"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 transition-colors"
@@ -112,9 +112,9 @@ const Footer = () => {
 
                 {/* Instagram */}
                 <a
-                  href="https://instagram.com/yourprofile"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                   href="https://www.instagram.com/styleplus_perundurai?igsh=MXV1N3RpbTNkeW81bQ=="
+                   target="_blank"
+                   rel="noopener noreferrer"
                   className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 transition-colors"
                   aria-label="Instagram"
                 >
@@ -123,7 +123,7 @@ const Footer = () => {
 
                 {/* Mobile */}
                 <a
-                  href="tel:+1234567890"
+                  href="tel:9790177999"
                   className="p-3 rounded-full bg-rose-100 hover:bg-rose-200 transition-colors"
                   aria-label="Mobile"
                 >

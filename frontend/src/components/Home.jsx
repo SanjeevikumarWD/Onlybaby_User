@@ -281,7 +281,7 @@ function Home() {
                 className="group cursor-pointer"
                 onClick={() => {
                   handleAgeRangeClick(item.range);
-                  navigate("/product");
+                  // navigate("/product");
                 }}
               >
                 <div className="relative aspect-square rounded-2xl overflow-hidden bg-white shadow-lg transition-all duration-300 group-hover:shadow-2xl">

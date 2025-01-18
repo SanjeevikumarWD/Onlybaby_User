@@ -107,14 +107,11 @@ const Nav = () => {
 
         const userId = user._id;
 
-        await axios.put(
-          `${serverUrl}/api/auth/updateUserItems`,
-          {
-            userId,
-            cartItems: filteredCartItems,
-            likedItems: filteredLikedItems,
-          }
-        );
+        await axios.put(`${serverUrl}/api/auth/updateUserItems`, {
+          userId,
+          cartItems: filteredCartItems,
+          likedItems: filteredLikedItems,
+        });
       }
 
       await logout();
@@ -375,9 +372,7 @@ const Nav = () => {
               >
                 HOME
               </li>
-              <li className="font-regular text-2xl cursor-none flex items-center gap-5 text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100">
-                SHOP BY CATEGORY
-              </li>
+
               <li
                 className="font-regular text-2xl cursor-pointer flex items-center gap-5 text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100"
                 onClick={() => handleDropdown("age")}
@@ -408,13 +403,27 @@ const Nav = () => {
               <li>
                 <ul className="flex space-x-8 text-3xl cursor-pointer">
                   <li className="text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100">
-                    <FaInstagram />
+                    <a
+                      href="https://www.instagram.com/styleplus_perundurai?igsh=MXV1N3RpbTNkeW81bQ=="
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaInstagram />
+                    </a>
                   </li>
                   <li className="text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100">
-                    <FaWhatsapp />
+                    <a
+                      href="https://wa.me/9790177999"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <FaWhatsapp />
+                    </a>
                   </li>
                   <li className="text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100">
-                    <IoMdCall />
+                    <a href="tel:9790177999">
+                      <IoMdCall />
+                    </a>
                   </li>
                 </ul>
               </li>
@@ -525,7 +534,17 @@ const Nav = () => {
                     navigate("/product");
                   }}
                 >
-                  Above ₹1000
+                  ₹1000 - ₹2000
+                </li>
+                <li
+                  className="font-regular text-2xl cursor-pointer flex items-center gap-5 text-slate-500 active:text-black active:bg-slate-300 p-2 transition-colors duration-100"
+                  onClick={() => {
+                    handlePriceRangeClick("2000-200000");
+                    handleMenuClick();
+                    navigate("/product");
+                  }}
+                >
+                  ₹2000 - above
                 </li>
               </ul>
             </div>
@@ -839,7 +858,6 @@ const Nav = () => {
         </div>
       )}
 
-    
       {/* forgetpassword  */}
       {showForgetpage && (
         <div

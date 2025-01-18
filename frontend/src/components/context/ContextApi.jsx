@@ -78,7 +78,6 @@ export const ToyStoreProvider = ({ children }) => {
       }
     };
 
-
     fetchProducts();
   }, []);
 
@@ -165,6 +164,7 @@ export const ToyStoreProvider = ({ children }) => {
 
   const handleAgeRangeClick = (range) => {
     setFilters((prev) => ({ ...prev, ageRange: range }));
+    navigate("/product");
   };
 
   const handlePriceRangeClick = (range) => {
@@ -191,11 +191,14 @@ export const ToyStoreProvider = ({ children }) => {
         product.price > 200 &&
         product.price <= 500) ||
       (filters.priceRange === "500-1000" &&
-        product.price > 100 &&
-        product.price <= 200) ||
+        product.price > 500 &&
+        product.price <= 1000) ||
       (filters.priceRange === "1000-2000" &&
         product.price > 1000 &&
-        product.price <= 2000);
+        product.price <= 2000) ||
+      (filters.priceRange === "2000-200000" &&
+        product.price > 2000 &&
+        product.price <= 200000);
 
     return ageMatches && priceMatches;
   });

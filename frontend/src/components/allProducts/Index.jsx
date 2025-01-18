@@ -139,6 +139,7 @@ const AllProducts = () => {
     { label: "₹200 - ₹500", value: "200-500" },
     { label: "₹500 - ₹1000", value: "500-1000" },
     { label: "₹1000 - ₹2000", value: "1000-2000" },
+    { label: "₹2000 - above", value: "2000-200000" }
   ];
 
   useEffect(() => {

@@ -5,10 +5,13 @@ import RelatedProducts from "./RelatedProducts";
 
 const formatStringToList = (str) => {
   if (!str || typeof str !== "string") return [];
-  return str.split(/(?=[A-Z])/).map((item) =>
-    item.trim().charAt(0).toUpperCase() + item.trim().slice(1)
-  );
+  return str
+    .split(",") // Split by commas
+    .map((item) => item.trim()) // Trim spaces around each item
+    .filter((item) => item.length > 0) // Remove any empty items
+    .map((item) => item.charAt(0).toUpperCase() + item.slice(1)); // Capitalize each item
 };
+
 
 const ImageCarousel = ({ images, currentIndex, onNext, onPrev, productName }) => (
   <div className="relative w-full h-96 mb-8 p-10">
