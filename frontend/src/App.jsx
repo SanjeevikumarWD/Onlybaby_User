@@ -20,6 +20,7 @@ const App = () => {
   return (
     <div>
       <Router>
+        {/* hello dev */}
         <ScrollToTop />
         <ToyStoreProvider>
           <div className="bg-gradient-to-bl from-sky-50 via-violet-50 to-pink-50">
