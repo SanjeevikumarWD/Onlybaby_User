@@ -11,9 +11,9 @@ dotenv.config();
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Your Twilio WhatsApp number
-const storeOwnerNumber = process.env.STORE_OWNER_WHATSAPP;
-const client = twilio(accountSid, authToken);
+// const whatsappNumber = process.env.TWILIO_WHATSAPP_NUMBER; // Your Twilio WhatsApp number
+// const storeOwnerNumber = process.env.STORE_OWNER_WHATSAPP;
+// const client = twilio(accountSid, authToken);
 
 // Save or Update Draft Order
 export const saveOrUpdateDraftOrder = async (req, res) => {
