@@ -11,10 +11,10 @@ import "react-toastify/dist/ReactToastify.css";
 import ResetPassword from "./components/registerLogin/ResetPassword.jsx";
 import SingleProduct from "./components/product/SingleProduct.jsx";
 import PaymentConfirmation from "./components/payment/PaymentConfirmation"; // Add the PaymentConfirmation import
-import UserPurchaseHistory from "./components/user/UserPurchaseHistory"; // Import the UserPurchaseHistory component
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import AllProducts from "./components/allProducts/Index.jsx";
+import UserPurchaseHistory from "./components/user/UserPurchaseHistory.jsx";
 
 const App = () => {
   return (
