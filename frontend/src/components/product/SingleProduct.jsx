@@ -12,8 +12,13 @@ const formatStringToList = (str) => {
     .map((item) => item.charAt(0).toUpperCase() + item.slice(1)); // Capitalize each item
 };
 
-
-const ImageCarousel = ({ images, currentIndex, onNext, onPrev, productName }) => (
+const ImageCarousel = ({
+  images,
+  currentIndex,
+  onNext,
+  onPrev,
+  productName,
+}) => (
   <div className="relative w-full h-96 mb-8 p-10">
     <motion.img
       key={currentIndex}
@@ -75,7 +80,6 @@ const ProductInfo = ({ label, items }) => (
 );
 
 const PriceTag = ({ price, discount }) => {
-
   const Discount = discount || 0;
 
   // Ensure price and discount are numbers
@@ -86,13 +90,15 @@ const PriceTag = ({ price, discount }) => {
   const discountedPrice = numericPrice - (numericPrice * numericDiscount) / 100;
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 ">
       <span className="text-2xl font-bold text-blue-600">
-      ₹ {discountedPrice.toFixed(2)}
+        ₹ {discountedPrice.toFixed(2)}
       </span>
       {numericDiscount > 0 && (
         <>
-          <span className="text-lg text-gray-400 line-through">${numericPrice}</span>
+          <span className="text-lg text-gray-400 line-through">
+            ${numericPrice}
+          </span>
           <span className="px-2 py-1 bg-red-100 text-red-600 text-sm font-semibold rounded">
             {numericDiscount}% OFF
           </span>
@@ -103,9 +109,16 @@ const PriceTag = ({ price, discount }) => {
 };
 
 const SingleProduct = () => {
-  const { sidebarState, closeSidebar, addToCart, setSingleProduct, setShowPayment } = useContext(ToyStore);
+  const {
+    sidebarState,
+    closeSidebar,
+    addToCart,
+    setSingleProduct,
+    setShowPayment,
+  } = useContext(ToyStore);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [cartMessage, setCartMessage] = useState("");
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const product = sidebarState.product;
   if (!sidebarState.isOpen || !product) return null;
@@ -128,6 +141,16 @@ const SingleProduct = () => {
     setTimeout(() => setCartMessage(""), 3000);
   };
 
+  const handleBuyNow = () => {
+    const updatedProduct = {
+      ...product,
+      color:selectedColor, // Add the selected color to the product object
+    };
+    setSingleProduct(updatedProduct);
+    closeSidebar();
+    setShowPayment(true);
+  };
+
   const features = formatStringToList(product?.features);
   const benefits = formatStringToList(product?.benefits);
   const itemsIncluded = formatStringToList(product?.itemsIncluded);
@@ -138,9 +161,9 @@ const SingleProduct = () => {
       animate={{ x: 0 }}
       exit={{ x: "100%" }}
       transition={{ type: "spring", damping: 25, stiffness: 120 }}
-      className="fixed top-0 right-0 w-full md:w-9/12 lg:w-7/12 h-full bg-white shadow-2xl z-50 overflow-y-auto"
+      className="fixed top-0 right-0 overflow-hidden w-full md:w-9/12 lg:w-7/12 h-full bg-white shadow-2xl z-50 overflow-y-auto"
     >
-      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm p-4 border-b">
+      <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-sm p-4 border-b ">
         <motion.button
           whileHover={{ scale: 1.1, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
@@ -181,6 +204,25 @@ const SingleProduct = () => {
 
           <p className="text-gray-600 leading-relaxed">{product.description}</p>
 
+          <div className="flex gap-2">
+            <p className="text-xl font-semibold text-gray-800">Colors:</p>
+            <div className="flex gap-2">
+              {product.color.split(",").map((color, index) => (
+                <div
+                  key={index}
+                  className={`w-6 h-6 rounded-full border-2 cursor-pointer ${
+                    selectedColor === color.trim()
+                      ? "border-black"
+                      : "border-white"
+                  }`}
+                  style={{ backgroundColor: color.trim() }}
+                  title={color.trim()}
+                  onClick={() => setSelectedColor(color.trim())}
+                ></div>
+              ))}
+            </div>
+          </div>
+
           <div className="space-y-6">
             <ProductInfo label="What's Included" items={itemsIncluded} />
             <ProductInfo label="Features" items={features} />
@@ -192,11 +234,12 @@ const SingleProduct = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-              onClick={() => {
-                setSingleProduct(product);
-                closeSidebar();
-                setShowPayment(true);
-              }}
+              // onClick={() => {
+              //   setSingleProduct(product);
+              //   closeSidebar();
+              //   setShowPayment(true);
+              // }}
+              onClick={handleBuyNow}
             >
               Buy Now
             </motion.button>
@@ -228,7 +271,5 @@ const SingleProduct = () => {
     </motion.div>
   );
 };
-
-
 
 export default SingleProduct;

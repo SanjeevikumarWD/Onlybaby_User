@@ -49,7 +49,7 @@ const Cards = ({ product }) => {
           whileHover={{ scale: 1.02 }}
           className="block text-xs md:text-sm lg:text-md font-medium tracking-widest uppercase dark:text-violet-600"
         >
-          {product.name}
+          {product.name.length > 60 ? `${product.name.substring(0, 20)}...` : product.name}
         </motion.span>
       </motion.div>
 

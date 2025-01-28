@@ -152,15 +152,27 @@ export const ToyStoreProvider = ({ children }) => {
   const closeSidebar = () => setSidebarState({ isOpen: false, product: null });
 
   // Filters and Helper Functions
+  // const parseAgeGroup = (ageGroup) => {
+  //   if (ageGroup.includes("Month")) {
+  //     return parseInt(ageGroup.split(" ")[0], 10) / 12;
+  //   }
+  //   if (ageGroup.includes("Year")) {
+  //     return parseInt(ageGroup.split(" ")[0], 10);
+  //   }
+  //   return 0;
+  // };
+
+
   const parseAgeGroup = (ageGroup) => {
-    if (ageGroup.includes("Month")) {
-      return parseInt(ageGroup.split(" ")[0], 10) / 12;
+    // Extract numeric ranges (e.g., "0-1") from input like "0-1 Years" or "0-1 Months"
+    const match = ageGroup.match(/(\d+)-(\d+)/);
+    if (match) {
+      return `${match[1]}-${match[2]}`; // Return "0-1", "1-3", etc.
     }
-    if (ageGroup.includes("Year")) {
-      return parseInt(ageGroup.split(" ")[0], 10);
-    }
-    return 0;
+    return ""; // Default to an empty string if no match
   };
+  
+
 
   const handleAgeRangeClick = (range) => {
     setFilters((prev) => ({ ...prev, ageRange: range }));
@@ -176,11 +188,11 @@ export const ToyStoreProvider = ({ children }) => {
     const productAge = parseAgeGroup(product.ageGroup);
     const ageMatches =
       !filters.ageRange ||
-      (filters.ageRange === "0-1" && productAge >= 0 && productAge <= 1) ||
-      (filters.ageRange === "1-3" && productAge > 1 && productAge <= 3) ||
-      (filters.ageRange === "3-6" && productAge > 3 && productAge <= 6) ||
-      (filters.ageRange === "6-11" && productAge > 6 && productAge <= 11) ||
-      (filters.ageRange === "11-19" && productAge > 11 && productAge <= 19);
+      (filters.ageRange === "0-1" && productAge === "0-1") ||
+      (filters.ageRange === "1-3" && productAge === "1-3") ||
+      (filters.ageRange === "3-6" && productAge === "3-6") ||
+      (filters.ageRange === "6-11" && productAge === "6-11") ||
+      (filters.ageRange === "11-19" && productAge === "11-19");
 
     const priceMatches =
       !filters.priceRange ||

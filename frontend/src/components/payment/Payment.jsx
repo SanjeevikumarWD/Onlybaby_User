@@ -27,6 +27,9 @@ const Payment = () => {
     setCartClicked,
     setShippingPrice,
   } = useContext(ToyStore);
+
+  console.log("single product", singleProduct);
+
   const navigate = useNavigate();
   const { user } = useAuthStore.getState();
 
