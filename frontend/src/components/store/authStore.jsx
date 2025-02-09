@@ -15,7 +15,7 @@ export const useAuthStore = create((set) => ({
 
     try {
       const response = await axios.post(
-        `http://localhost:5001/api/auth/signup`,
+        `https://onlybaby-user.onrender.com/api/auth/signup`,
         {
           name,
           email,

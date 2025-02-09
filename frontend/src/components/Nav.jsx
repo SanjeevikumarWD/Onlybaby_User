@@ -106,7 +106,7 @@ const Nav = () => {
 
         const userId = user._id;
 
-        await axios.put(`http://localhost:5001/api/auth/updateUserItems`, {
+        await axios.put(`https://onlybaby-user.onrender.com/api/auth/updateUserItems`, {
           userId,
           cartItems: filteredCartItems,
           likedItems: filteredLikedItems,

@@ -67,7 +67,7 @@ export const ToyStoreProvider = ({ children }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:5001/api/shop`);
+        const response = await axios.get(`https://onlybaby-user.onrender.com/api/shop`);
         setProducts(response.data.products);
       } catch (error) {
         setError(error.message);
@@ -85,7 +85,7 @@ export const ToyStoreProvider = ({ children }) => {
     const fetchMembership = async () => {
       try {
         const response = await axios.post(
-          `http://localhost:5001/api/membership/fetch`,
+          `https://onlybaby-user.onrender.com/api/membership/fetch`,
           { userId: user?._id } // Use optional chaining to safely access user._id
         );
 
@@ -111,7 +111,7 @@ export const ToyStoreProvider = ({ children }) => {
       try {
         if (user?._id) {
           const response = await axios.get(
-            `http://localhost:5001/api/orders/getOrderHistory`,
+            `https://onlybaby-user.onrender.com/api/orders/getOrderHistory`,
             {
               params: { user: user._id },
             }
