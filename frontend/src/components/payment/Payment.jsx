@@ -16,8 +16,7 @@ const Payment = () => {
     email: "",
   });
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+ 
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -86,7 +85,7 @@ const Payment = () => {
       };
 
       const response = await axios.post(
-        `${serverUrl}/api/orders/saveAddress`,
+        `http://localhost:5001/api/orders/saveAddress`,
         orderData
       );
 

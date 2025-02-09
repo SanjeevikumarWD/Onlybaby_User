@@ -15,8 +15,7 @@ const Login = ({ onClickAccount }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+ 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true); // Start loading
@@ -109,7 +108,7 @@ const Login = ({ onClickAccount }) => {
         const userId = loggedInUser._id;
 
         await axios.put(
-          `${serverUrl}/api/auth/updateUserItems`, // Combined Endpoint
+          `http://localhost:5001/api/auth/updateUserItems`, // Combined Endpoint
           {
             userId,
             cartItems: mergedCartItems,

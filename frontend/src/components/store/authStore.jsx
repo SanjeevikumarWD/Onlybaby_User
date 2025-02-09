@@ -2,9 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 
 
-
-const api_url = import.meta.env.VITE_SERVER_URL
-
 export const useAuthStore = create((set) => ({
   user: JSON.parse(localStorage.getItem("user")) || null,
   isAuthenticated: !!localStorage.getItem("user"),
@@ -18,7 +15,7 @@ export const useAuthStore = create((set) => ({
 
     try {
       const response = await axios.post(
-        `${api_url}/api/auth/signup`,
+        `http://localhost:5001/api/auth/signup`,
         {
           name,
           email,

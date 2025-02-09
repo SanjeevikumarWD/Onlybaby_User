@@ -12,8 +12,7 @@ const PaymentConfirmation = () => {
   const { user } = useAuthStore.getState();
   const navigate = useNavigate();
   const { orders, memberShip, shippingPrice } = useContext(ToyStore);
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+ 
   const {
     orderItems = [],
     shippingAddress = {},
@@ -55,7 +54,7 @@ const PaymentConfirmation = () => {
   const handlePayment = async () => {
     try {
       const paymentResponse = await axios.post(
-        `${serverUrl}/api/orders/initiate`,
+        `http://localhost:5001/api/orders/initiate`,
         {
           itemsPrice: grandTotal, // Use the discounted total
           // shippingPrice: finalShippingPrice + 1,
@@ -89,7 +88,7 @@ const PaymentConfirmation = () => {
             razorpaySecretKey
           );
 
-          await axios.post(`${serverUrl}/api/orders/verify`, {
+          await axios.post(`http://localhost:5001/api/orders/verify`, {
             razorpayOrderId: razorpay_order_id,
             razorpayPaymentId: razorpay_payment_id,
             razorpaySignature: generatedSignature,

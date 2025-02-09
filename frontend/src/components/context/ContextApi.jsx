@@ -37,8 +37,7 @@ export const ToyStoreProvider = ({ children }) => {
   const [shippingPrice, setShippingPrice] = useState(0);
   const { user } = useAuthStore();
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+ 
   const newArrival = useRef(null);
 
   //function to store toggel show
@@ -68,7 +67,7 @@ export const ToyStoreProvider = ({ children }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${serverUrl}/api/shop`);
+        const response = await axios.get(`http://localhost:5001/api/shop`);
         setProducts(response.data.products);
       } catch (error) {
         setError(error.message);
@@ -86,7 +85,7 @@ export const ToyStoreProvider = ({ children }) => {
     const fetchMembership = async () => {
       try {
         const response = await axios.post(
-          `${serverUrl}/api/membership/fetch`,
+          `http://localhost:5001/api/membership/fetch`,
           { userId: user?._id } // Use optional chaining to safely access user._id
         );
 
@@ -112,7 +111,7 @@ export const ToyStoreProvider = ({ children }) => {
       try {
         if (user?._id) {
           const response = await axios.get(
-            `${serverUrl}/api/orders/getOrderHistory`,
+            `http://localhost:5001/api/orders/getOrderHistory`,
             {
               params: { user: user._id },
             }

@@ -33,8 +33,7 @@ const Nav = () => {
 
   const { user, logout } = useAuthStore();
 
-  const serverUrl = import.meta.env.VITE_SERVER_URL;
-
+ 
   const {
     handleAgeRangeClick,
     handlePriceRangeClick,
@@ -107,7 +106,7 @@ const Nav = () => {
 
         const userId = user._id;
 
-        await axios.put(`${serverUrl}/api/auth/updateUserItems`, {
+        await axios.put(`http://localhost:5001/api/auth/updateUserItems`, {
           userId,
           cartItems: filteredCartItems,
           likedItems: filteredLikedItems,
