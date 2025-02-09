@@ -3,7 +3,7 @@ import { ToyStore } from "../context/ContextApi";
 import LoadingState from "./LoadingState";
 import ErrorState from "./ErrorState";
 
-const Userpurchasehistory = () => {
+const UserPurchaseHistory = () => {
     const { orders, loading, error, openSidebar } = useContext(ToyStore);
     const [selectedOrder, setSelectedOrder] = React.useState(null); // Add selectedOrder state
 
@@ -107,4 +107,4 @@ const Userpurchasehistory = () => {
     );
 };
 
-export default Userpurchasehistory;
+export default UserPurchaseHistory;

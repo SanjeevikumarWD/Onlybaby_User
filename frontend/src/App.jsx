@@ -14,7 +14,7 @@ import PaymentConfirmation from "./components/payment/PaymentConfirmation"; // A
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import AllProducts from "./components/allProducts/Index.jsx";
-import Userpurchasehistory from "./components/user/Userpurchasehistory.jsx";
+import UserPurchaseHistory from "./components/user/Userpurchasehistory.jsx";
 
 const App = () => {
   return (
@@ -44,7 +44,7 @@ const App = () => {
                 {/* Add route for payment confirmation */}
                 <Route
                   path="/purchase-history"
-                  element={<Userpurchasehistory />}
+                  element={<UserPurchaseHistory />}
                 />{" "}
                 {/* Add route for purchase history */}
               </Routes>
