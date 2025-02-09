@@ -39,7 +39,7 @@ function Home() {
     threshold: 0.1,
   });
 
-  const bestSeller = products.filter((product) => product.bestSellers);
+  const bestSeller = products?.filter((product) => product.bestSellers);
   
   const features = [
     {

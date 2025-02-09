@@ -367,7 +367,7 @@ export const getOrderHistory = async (req, res) => {
     const orderHistory = userOrders
       .map((userOrder) => userOrder.orders) // Get all orders array from each userOrder
       .flat() // Flatten the array to get all individual orders
-      .filter((order) => !order.isDraft) // Filter out draft orders
+      ?.filter((order) => !order.isDraft) // Filter out draft orders
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by creation date
 
     res.status(200).json({ success: true, orders: orderHistory });

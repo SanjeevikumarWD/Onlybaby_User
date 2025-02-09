@@ -97,10 +97,10 @@ const Nav = () => {
         const storedLikedItems =
           JSON.parse(localStorage.getItem("likedItems")) || [];
 
-        const filteredCartItems = storedCartItems.filter(
+        const filteredCartItems = storedCartItems?.filter(
           (item) => typeof item === "object"
         );
-        const filteredLikedItems = storedLikedItems.filter(
+        const filteredLikedItems = storedLikedItems?.filter(
           (item) => typeof item === "object"
         );
 
@@ -187,7 +187,7 @@ const Nav = () => {
   };
 
   //search filter
-  const filteredProducts = products.filter(
+  const filteredProducts = products?.filter(
     (product) =>
       typeof product.name === "string" &&
       product.name.toLowerCase().includes(searchQuery.toLowerCase())

@@ -133,14 +133,14 @@ export const ToyStoreProvider = ({ children }) => {
   const handleLikeToggle = (product) => {
     setLikedItems((prevLikedItems) => {
       if (prevLikedItems.some((item) => item._id === product._id)) {
-        return prevLikedItems.filter((item) => item._id !== product._id);
+        return prevLikedItems?.filter((item) => item._id !== product._id);
       }
       return [...prevLikedItems, product];
     });
   };
 
   const removeFromLiked = (itemName) => {
-    const updatedCart = likedItems.filter((item) => item.name !== itemName);
+    const updatedCart = likedItems?.filter((item) => item.name !== itemName);
     setLikedItems(updatedCart);
     toast.success(`${itemName} removed from cart`);
   };
@@ -183,7 +183,7 @@ export const ToyStoreProvider = ({ children }) => {
     navigate("/product");
   };
 
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = products?.filter((product) => {
     const productAge = parseAgeGroup(product.ageGroup);
     const ageMatches =
       !filters.ageRange ||
@@ -253,14 +253,14 @@ export const ToyStoreProvider = ({ children }) => {
           ? { ...item, cartQuantity: item.cartQuantity - 1 }
           : item
       )
-      .filter((item) => item.cartQuantity > 0);
+      ?.filter((item) => item.cartQuantity > 0);
 
     setCartItems(updatedCart);
     storeCartInLocalStorage(updatedCart);
   };
 
   const removeFromCart = (itemName) => {
-    const updatedCart = cartItems.filter((item) => item.name !== itemName);
+    const updatedCart = cartItems?.filter((item) => item.name !== itemName);
     setCartItems(updatedCart);
     toast.success(`${itemName} removed from cart`);
     storeCartInLocalStorage(updatedCart);

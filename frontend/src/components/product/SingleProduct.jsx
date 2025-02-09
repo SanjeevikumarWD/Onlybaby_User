@@ -8,7 +8,7 @@ const formatStringToList = (str) => {
   return str
     .split(",") // Split by commas
     .map((item) => item.trim()) // Trim spaces around each item
-    .filter((item) => item.length > 0) // Remove any empty items
+    ?.filter((item) => item.length > 0) // Remove any empty items
     .map((item) => item.charAt(0).toUpperCase() + item.slice(1)); // Capitalize each item
 };
 
