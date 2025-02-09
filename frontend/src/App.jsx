@@ -14,8 +14,7 @@ import PaymentConfirmation from "./components/payment/PaymentConfirmation"; // A
 import { Toaster } from "react-hot-toast";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import AllProducts from "./components/allProducts/Index.jsx";
-import UserPurchaseHistory from "./components/user/Userpurchasehistory.jsx";
-
+import UserPurchaseHistory from "./components/user/userPurchaseHistory.jsx";
 const App = () => {
   return (
     <div>
