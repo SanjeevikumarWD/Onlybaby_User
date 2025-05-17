@@ -34,10 +34,10 @@ ONLYBABY is a full-stack e-commerce web application designed specifically for se
 
 ## 📷 Screenshots
 
-![Screenshot 1](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/home.png)
-![Screenshot 2](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/product.png)
-![Screenshot 3](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/ind_product.png)
-![Screenshot 4](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/contact.png)
+![Screenshot 1](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/home.jpg)
+![Screenshot 2](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/product.jpg)
+![Screenshot 3](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/ind_product.jpg)
+![Screenshot 4](https://raw.githubusercontent.com/SanjeevikumarWD/Onlybaby_User/main/frontend/public/assets/contact.jpg)
 
 ---
 
